@@ -1,4 +1,4 @@
-﻿namespace ConsoleApplication1
+﻿namespace ClientBenchmarks
 {
     public class MetaType
     {

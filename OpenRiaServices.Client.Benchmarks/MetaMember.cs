@@ -9,7 +9,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication1
+namespace ClientBenchmarks
 {
     [DebuggerDisplay("Name = {Member.Name}")]
     internal sealed class MetaMember<T, TProp> : MetaMember

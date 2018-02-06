@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
 
-namespace ConsoleApplication1
+namespace ClientBenchmarks
 {
     public static class FastActivator
     {

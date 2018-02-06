@@ -11,11 +11,10 @@ using BenchmarkDotNet.Attributes.Jobs;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace ConsoleApplication1
+namespace ClientBenchmarks
 {
     [LegacyJitX86Job, RyuJitX64Job]
     [MemoryDiagnoser]
-    [ShortRunJob]
     public class InvokeBenchmarks
     {
         City _city = new City() { CountyName = "Dummy" };

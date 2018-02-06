@@ -8,21 +8,18 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Jobs;
 using Cities;
+using System.Threading;
+using ClientBenchmarks.Helpers;
 
-namespace ConsoleApplication1
+namespace ClientBenchmarks
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var i = new InvokeBenchmarks();
-            i.MetaMember_VirtualMethod();
-            i.DelegateInvoke();
-
-
             //BenchmarkRunner.Run<EntityBenchmarks>();
             //BenchmarkRunner.Run<EntitySetBenchmarks>();
-            BenchmarkRunner.Run<InvokeBenchmarks>();
+            BenchmarkRunner.Run<ChangeSetBenchmarks>();
         }
     }
 }

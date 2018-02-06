@@ -205,11 +205,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeSetBenchmarks.cs" />
     <Compile Include="Cities\Cities.g.cs" />
     <Compile Include="Cities\Cities.shared.cs" />
     <Compile Include="EntityBenchmarks.cs" />
     <Compile Include="EntitySetBenchmarks.cs" />
+    <Compile Include="Helpers\EntitySetHelper.cs" />
     <Compile Include="Helpers\FastActivator.cs" />
+    <Compile Include="Helpers\NoOpSynchronizationContext.cs" />
     <Compile Include="InvokeBenchmarks.cs" />
     <Compile Include="MetaMember.cs" />
     <Compile Include="MetaType.cs" />

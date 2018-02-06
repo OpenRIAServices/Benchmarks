@@ -11,7 +11,7 @@ using Cities;
 using OpenRiaServices.DomainServices.Client;
 
 
-namespace ConsoleApplication1
+namespace ClientBenchmarks
 {
     [MemoryDiagnoser]
     [ShortRunJob]
@@ -26,7 +26,7 @@ namespace ConsoleApplication1
         //[IterationSetup]
         public void Setup()
         {
-            _entitySet = CreateEntitySet<City>();
+            _entitySet = Helpers.EntitySetHelper.CreateEntitySet<City>();
             _cities = CreateCities(NumEntities).ToList();
         }
 
@@ -125,17 +125,6 @@ namespace ConsoleApplication1
             }
         }
 
-        private EntitySet<T> CreateEntitySet<T>() where T : Entity
-        {
-            return this.CreateEntitySet<T>(EntitySetOperations.All);
-        }
-
-        private EntitySet<T> CreateEntitySet<T>(EntitySetOperations operations) where T : Entity
-        {
-            DynamicEntityContainer container = new DynamicEntityContainer();
-            return container.AddEntitySet<T>(operations);
-        }
-
         private IEnumerable<City> GetCities() => _cities;
 
         private static IEnumerable<City> CreateCities(int num)
@@ -143,19 +132,6 @@ namespace ConsoleApplication1
             for (var i = 0; i < num; i++)
             {
                 yield return new City { Name = "" + i, CountyName = "c", StateName = "s" };
-            }
-        }
-
-        /// <summary>
-        /// An dynamic EntityContainer class that allows external configuration of
-        /// EntitySets for testing purposes.
-        /// </summary>
-        public class DynamicEntityContainer : EntityContainer
-        {
-            public EntitySet<T> AddEntitySet<T>(EntitySetOperations operations) where T : Entity
-            {
-                base.CreateEntitySet<T>(operations);
-                return GetEntitySet<T>();
             }
         }
     }
