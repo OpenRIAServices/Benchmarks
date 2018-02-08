@@ -17,9 +17,14 @@ namespace ClientBenchmarks
     {
         static void Main(string[] args)
         {
+            var a = new LoadBenchmarks();
+            a.LoadEntities();
+            return;
+
             //BenchmarkRunner.Run<EntityBenchmarks>();
             //BenchmarkRunner.Run<EntitySetBenchmarks>();
             BenchmarkRunner.Run<ChangeSetBenchmarks>();
+            BenchmarkRunner.Run<LoadBenchmarks>();
         }
     }
 }

@@ -205,6 +205,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoadBenchmarks.cs" />
     <Compile Include="ChangeSetBenchmarks.cs" />
     <Compile Include="Cities\Cities.g.cs" />
     <Compile Include="Cities\Cities.shared.cs" />
