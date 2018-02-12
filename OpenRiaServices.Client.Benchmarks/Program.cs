@@ -18,7 +18,10 @@ namespace ClientBenchmarks
         static void Main(string[] args)
         {
             var a = new LoadBenchmarks();
+            a.NumEntities = 5000;
             a.LoadEntities();
+            a.LoadAndRefreshEntities();
+            a.LoadAndMergeEntities();
             return;
 
             //BenchmarkRunner.Run<EntityBenchmarks>();

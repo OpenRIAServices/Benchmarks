@@ -39,110 +39,94 @@ namespace ClientBenchmarks
             return sb.ToString();
         }
 
-        private static IEnumerable<City> CreateValidCities(int num)
+        private static List<City> CreateValidCities(int num)
         {
+            List<City> cities = new List<City>(num);
             for (var i = 0; i < num; i++)
             {
-                yield return new City { Name = "Name" + ToAlphaKey(i), CountyName = "Country", StateName = "SA" };
+                cities.Add(new City { Name = "Name" + ToAlphaKey(i), CountyName = "Country", StateName = "SA" }
+                );
             }
+            return cities;
+        }
+
+        [Benchmark]
+        public void NoOp()
+        {
+            var cities1 = CreateValidCities(NumEntities);
+            var cities2 = CreateValidCities(NumEntities);
+
+            var mockDomainClient = new MockDomainClient();
+            var ctx = new CityDomainContext(mockDomainClient);
+
+            mockDomainClient.SetQueryResult(cities1);
+            mockDomainClient.SetQueryResult(cities2);
         }
 
         [Benchmark]
         public void LoadEntities()
         {
+            var cities1 = CreateValidCities(NumEntities);
+            var cities2 = CreateValidCities(NumEntities);
+
             var mockDomainClient = new MockDomainClient();
             var ctx = new CityDomainContext(mockDomainClient);
 
-            try
-            {
-
-                var res = ctx.Load(ctx.GetCitiesQuery(), true);
-                if (res.HasError)
-                    throw new Exception("Operation should have had erros");
-                if (res.IsComplete)
-                    throw new Exception("Operation should have completed");
-            }
-            catch (DomainOperationException)
-            {
-
-
-            }
+            mockDomainClient.SetQueryResult(cities1);
+            var res = ctx.Load(ctx.GetCitiesQuery(), true);
+            if (res.HasError)
+                throw new Exception("Operation should not have had erros");
+            if (!res.IsComplete)
+                throw new Exception("Operation should have completed");
         }
 
-
-        public class MockDomainClient : DomainClient
+        [Benchmark]
+        public void LoadAndMergeEntities()
         {
-            protected override IAsyncResult BeginQueryCore(EntityQuery query, AsyncCallback callback, object userState)
-            {
-                var cities = LoadBenchmarks.CreateValidCities(500);
-                var result = new MockLoadResult
-                {
-                    QueryResult = new QueryCompletedResult(cities, Enumerable.Empty<Entity>(), 1000, Enumerable.Empty<ValidationResult>()),
-                    AsyncState = userState,
-                };
+            var cities1 = CreateValidCities(NumEntities);
+            var cities2 = CreateValidCities(NumEntities);
 
-                callback(result);
-                return result;
-            }
+            var mockDomainClient = new MockDomainClient();
+            var ctx = new CityDomainContext(mockDomainClient);
 
-            protected override InvokeCompletedResult EndInvokeCore(IAsyncResult asyncResult)
-            {
-                throw new NotImplementedException();
-            }
+            mockDomainClient.SetQueryResult(cities1);
+            var res = ctx.Load(ctx.GetCitiesQuery(), true);
+            if (res.HasError)
+                throw new Exception("Operation should not have had erros");
+            if (!res.IsComplete)
+                throw new Exception("Operation should have completed");
 
-            protected override QueryCompletedResult EndQueryCore(IAsyncResult asyncResult)
-            {
-                var loadResult = ((MockLoadResult)(asyncResult));
-                return loadResult.QueryResult;
-            }
+            mockDomainClient.SetQueryResult(cities2);
+            res = ctx.Load(ctx.GetCitiesQuery(), LoadBehavior.MergeIntoCurrent, true);
+            if (res.HasError)
+                throw new Exception("Operation should not have had erros");
+            if (!res.IsComplete)
+                throw new Exception("Operation should have completed");
+        }
 
-            protected override SubmitCompletedResult EndSubmitCore(IAsyncResult asyncResult)
-            {
-                var submitResult = ((MockSubmitResult)(asyncResult));
-                return new SubmitCompletedResult(submitResult.EntityChangeSet, submitResult.ChangeSetEntries); ;
-            }
+        [Benchmark]
+        public void LoadAndRefreshEntities()
+        {
+            var cities1 = CreateValidCities(NumEntities);
+            var cities2 = CreateValidCities(NumEntities);
 
-            protected override IAsyncResult BeginSubmitCore(EntityChangeSet changeSet, AsyncCallback callback, object userState)
-            {
-                var asyncResult = new MockSubmitResult()
-                {
-                    AsyncState = userState,
-                    EntityChangeSet = changeSet,
-                    ChangeSetEntries = changeSet.GetChangeSetEntries(),
-                };
-                callback(asyncResult);
-                return asyncResult;
-            }
 
-            class MockLoadResult : IAsyncResult
-            {
-                public QueryCompletedResult QueryResult { get; set; }
+            var mockDomainClient = new MockDomainClient();
+            var ctx = new CityDomainContext(mockDomainClient);
 
-                public object AsyncState { get; set; }
+            mockDomainClient.SetQueryResult(cities1);
+            var res = ctx.Load(ctx.GetCitiesQuery(), true);
+            if (res.HasError)
+                throw new Exception("Operation should not have had erros");
+            if (!res.IsComplete)
+                throw new Exception("Operation should have completed");
 
-                public WaitHandle AsyncWaitHandle => null;
-
-                public bool CompletedSynchronously => true;
-
-                public bool IsCompleted => true;
-            }
-
-            class MockSubmitResult : IAsyncResult
-            {
-                public EntityChangeSet EntityChangeSet { get; set; }
-
-                public IEnumerable<ChangeSetEntry> ChangeSetEntries { get; set; }
-
-                public object AsyncState { get; set; }
-
-                public WaitHandle AsyncWaitHandle => null;
-
-                public bool CompletedSynchronously => true;
-
-                public bool IsCompleted => true;
-            }
+            mockDomainClient.SetQueryResult(cities2);
+            res = ctx.Load(ctx.GetCitiesQuery(), LoadBehavior.RefreshCurrent, true);
+            if (res.HasError)
+                throw new Exception("Operation should not have had erros");
+            if (!res.IsComplete)
+                throw new Exception("Operation should have completed");
         }
     }
-
-
 }

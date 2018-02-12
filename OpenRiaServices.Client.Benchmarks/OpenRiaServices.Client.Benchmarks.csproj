@@ -217,6 +217,7 @@
     <Compile Include="InvokeBenchmarks.cs" />
     <Compile Include="MetaMember.cs" />
     <Compile Include="MetaType.cs" />
+    <Compile Include="Helpers\MockDomainClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
