@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace OpenRiaServices.Client.Benchmarks.Client.Cities
+namespace OpenRiaServices.Client.Benchmarks.Server.Cities
 {
     // Shared resource class to demonstrate globalized strings moving across pipeline
     public class Cities_Resources

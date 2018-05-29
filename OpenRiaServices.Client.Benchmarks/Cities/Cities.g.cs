@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Cities
+namespace OpenRiaServices.Client.Benchmarks.Client.Cities
 {
     using System;
     using System.Collections.Generic;
@@ -1647,6 +1647,7 @@ namespace Cities
         }
     }
     
+
     [DataContract(Namespace="CityNamespace", Name="CityName")]
     public enum ShippingZone
     {

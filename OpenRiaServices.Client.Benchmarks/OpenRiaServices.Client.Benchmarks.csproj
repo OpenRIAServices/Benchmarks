@@ -33,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BenchmarkDotNet, Version=0.10.12.0, Culture=neutral, PublicKeyToken=aa0ca2f9092cefc4, processorArchitecture=MSIL">
@@ -220,6 +221,12 @@
     <Compile Include="Helpers\MockDomainClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\Cities\Cities.shared.cs" />
+    <Compile Include="Server\Cities\CityData.cs" />
+    <Compile Include="Server\Cities\CityDomainService.cs" />
+    <Compile Include="Server\Cities\CityEntities.cs" />
+    <Compile Include="Server\Cities\CityTypes.cs" />
+    <Compile Include="Server\E2Ebenchmarks.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -230,9 +237,23 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Client.Web\Framework\Desktop\OpenRiaServices.DomainServices.Client.Web.csproj">
+      <Project>{BDB2F9A3-5FC7-45FD-8496-B23752232688}</Project>
+      <Name>OpenRiaServices.DomainServices.Client.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client\Framework\Desktop\OpenRiaServices.DomainServices.Client.csproj">
       <Project>{3f4fbbd2-a634-44c7-9def-d71f349e706c}</Project>
       <Name>OpenRiaServices.DomainServices.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Hosting\Framework\OpenRiaServices.DomainServices.Hosting.csproj">
+      <Project>{e3844512-48a8-451a-9be4-ac7793016b9d}</Project>
+      <Name>OpenRiaServices.DomainServices.Hosting</Name>
+      <Aliases>server</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Server\Framework\OpenRiaServices.DomainServices.Server.csproj">
+      <Project>{72e74082-7928-4a70-83c1-49806b942fcb}</Project>
+      <Name>OpenRiaServices.DomainServices.Server</Name>
+      <Aliases>server</Aliases>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
