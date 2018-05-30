@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRiaServices.DomainServi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRiaServices.DomainServices.Client.Web", "..\OpenRiaServices\OpenRiaServices.DomainServices.Client.Web\Framework\Desktop\OpenRiaServices.DomainServices.Client.Web.csproj", "{BDB2F9A3-5FC7-45FD-8496-B23752232688}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.PortableWeb", "..\OpenRiaPlayground\HttpClient\OpenRiaServices.DomainServices.PortableWeb\OpenRiaServices.DomainServices.PortableWeb.csproj", "{46A37A73-6888-45EE-895C-0B9D7349511F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,12 @@ Global
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Signed|Any CPU.ActiveCfg = Signed|Any CPU
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Signed|Any CPU.Build.0 = Signed|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Signed|Any CPU.ActiveCfg = Release|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Signed|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +72,7 @@ Global
 		{E3844512-48A8-451A-9BE4-AC7793016B9D} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{72E74082-7928-4A70-83C1-49806B942FCB} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
+		{46A37A73-6888-45EE-895C-0B9D7349511F} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {593EA07D-8EEC-4DAA-9B48-DA7717C3A80F}

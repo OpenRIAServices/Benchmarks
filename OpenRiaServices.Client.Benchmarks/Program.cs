@@ -36,15 +36,16 @@ namespace ClientBenchmarks
             BenchmarkRunner.Run<LoadBenchmarks>();
         }
 
-        private static async Task RunBenchmarks()
+        private static void RunBenchmarks()
         {
             var b = new E2Ebenchmarks();
+            b.DomainClient = DomainClientType.HttpBinary;
             b.Start();
 
-            for (int i = 0; i < 10000; ++i)
+            for (int i = 0; i < 1000; ++i)
             {
-                await b.GetCititesReuseContext();
-                //Console.WriteLine("Got {0} entities", res.Count);
+                // We don't have a sync context so continuations can run in background
+                 b.GetCititesReuseContext().GetAwaiter().GetResult();
             }
 
             b.Stop();

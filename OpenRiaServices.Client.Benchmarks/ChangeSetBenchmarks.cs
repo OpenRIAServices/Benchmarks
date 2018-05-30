@@ -33,7 +33,7 @@ namespace ClientBenchmarks
             }
         }
 
-        static string ToAlphaKey(int num)
+        public static string ToAlphaKey(int num)
         {
             var sb = new StringBuilder();
             do
@@ -46,7 +46,7 @@ namespace ClientBenchmarks
             return sb.ToString();
         }
 
-        private static IEnumerable<City> CreateValidCities(int num)
+        public static IEnumerable<City> CreateValidCities(int num)
         {
             for (var i = 0; i < num; i++)
             {
