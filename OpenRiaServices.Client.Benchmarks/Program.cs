@@ -11,6 +11,7 @@ using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using System.Threading;
 using ClientBenchmarks.Helpers;
 using ClientBenchmarks.Server;
+using OpenRiaServices.DomainServices.Client;
 
 namespace ClientBenchmarks
 {
@@ -20,7 +21,7 @@ namespace ClientBenchmarks
         {
             //BenchmarkRunner.Run<E2Ebenchmarks>();
             //return;
-            Task.Run(() => RunBenchmarks()).GetAwaiter().GetResult();
+            Task.Run(() => RunBenchmarksAsyncParallel()).Wait();
             return;
 
             var a = new LoadBenchmarks();
@@ -45,7 +46,46 @@ namespace ClientBenchmarks
             for (int i = 0; i < 1000; ++i)
             {
                 // We don't have a sync context so continuations can run in background
-                 b.GetCititesReuseContext().GetAwaiter().GetResult();
+                b.GetCititesReuseContext().GetAwaiter().GetResult();
+            }
+
+            b.Stop();
+        }
+
+        private static async Task RunBenchmarksAsync()
+        {
+            var b = new E2Ebenchmarks();
+            b.DomainClient = DomainClientType.WcfBinary;
+            b.Start();
+
+            for (int i = 0; i < 1000; ++i)
+            {
+                // We don't have a sync context so continuations can run in background
+                await b.GetCititesReuseContext().ConfigureAwait(false);
+            }
+
+            b.Stop();
+        }
+
+        private static async Task  RunBenchmarksAsyncParallel()
+        {
+            var b = new E2Ebenchmarks();
+            b.DomainClient = DomainClientType.HttpBinary;
+            b.Start();
+
+            const int total = 1000;
+            const int concurrent = 8;
+            const int outer = total / concurrent;
+
+            var tasks = new Task<LoadResult<City>>[concurrent];
+
+            for (int i = 0; i < outer; ++i)
+            {
+                for (int j = 0; j < concurrent; ++j)
+                    tasks[j] = b.GetCititesReuseContext();
+
+                // We don't have a sync context so continuations can run in background
+                var results = await Task.WhenAll(tasks);
             }
 
             b.Stop();

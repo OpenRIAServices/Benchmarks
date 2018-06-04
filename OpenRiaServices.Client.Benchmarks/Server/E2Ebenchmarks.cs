@@ -46,7 +46,7 @@ namespace ClientBenchmarks.Server
         public int NumEntities { get; set; } = 500;
 
         //[Params(DomainClientType.WcfBinary, DomainClientType.HttpBinary)]
-        [Params(DomainClientType.HttpBinary)]
+        [Params(DomainClientType.HttpBinary, DomainClientType.WcfBinary)]
         public DomainClientType DomainClient { get; set;}
 
         [IterationSetup]
@@ -104,13 +104,13 @@ namespace ClientBenchmarks.Server
         public async Task<LoadResult<OpenRiaServices.Client.Benchmarks.Client.Cities.City>> GetCititesUniqueContext()
         {
             CityDomainContext ctx = new CityDomainContext(_uri);
-            return await ctx.LoadAsync(ctx.GetCitiesQuery());
+            return await ctx.LoadAsync(ctx.GetCitiesQuery()).ConfigureAwait(false);
         }
 
         [Benchmark]
         public async Task<LoadResult<OpenRiaServices.Client.Benchmarks.Client.Cities.City>> GetCititesReuseContext()
         {
-            return await _ctx.LoadAsync(_ctx.GetCitiesQuery());
+            return await _ctx.LoadAsync(_ctx.GetCitiesQuery()).ConfigureAwait(false);
         }
 
         [Benchmark]
@@ -120,7 +120,7 @@ namespace ClientBenchmarks.Server
             foreach (var city in ChangeSetBenchmarks.CreateValidCities(NumEntities))
                 ctx.Cities.Add(city);
 
-            var res = await ctx.SubmitChangesAsync();
+            var res = await ctx.SubmitChangesAsync().ConfigureAwait(false);
 
             if (res.ChangeSet.AddedEntities.Count != NumEntities)
                 throw new Exception("Operation should have completed");
