@@ -260,11 +260,11 @@
       <Project>{46a37a73-6888-45ee-895c-0b9d7349511f}</Project>
       <Name>OpenRiaServices.DomainServices.PortableWeb</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Client.Web\Framework\Desktop\OpenRiaServices.DomainServices.Client.Web.csproj">
+    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Client.Web\Framework\OpenRiaServices.DomainServices.Client.Web.csproj">
       <Project>{BDB2F9A3-5FC7-45FD-8496-B23752232688}</Project>
       <Name>OpenRiaServices.DomainServices.Client.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client\Framework\Desktop\OpenRiaServices.DomainServices.Client.csproj">
+    <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client\Framework\OpenRiaServices.DomainServices.Client.csproj">
       <Project>{3f4fbbd2-a634-44c7-9def-d71f349e706c}</Project>
       <Name>OpenRiaServices.DomainServices.Client</Name>
     </ProjectReference>
