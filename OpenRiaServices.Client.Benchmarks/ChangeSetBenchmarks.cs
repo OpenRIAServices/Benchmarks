@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Jobs;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using ClientBenchmarks.Helpers;
 using OpenRiaServices.DomainServices.Client;
