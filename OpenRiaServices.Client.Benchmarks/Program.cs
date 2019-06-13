@@ -1,39 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Running;
-using BenchmarkDotNet.Jobs;
-using OpenRiaServices.Client.Benchmarks.Client.Cities;
-using System.Threading;
-using ClientBenchmarks.Helpers;
+﻿using BenchmarkDotNet.Running;
 using ClientBenchmarks.Server;
+using System.Threading.Tasks;
 
 namespace ClientBenchmarks
 {
-    class Program
+    internal class Program
     {
-        public static void Main(string[] args)
+        static bool onlyProfiling = false;
+
+        private static void Main(string[] args)
         {
-            //BenchmarkRunner.Run<E2Ebenchmarks>();
-            //return;
-            Task.Run(() => RunBenchmarks()).GetAwaiter().GetResult();
-            return;
+            if (onlyProfiling)
+            {
+                Task.Run(() => RunBenchmarks()).GetAwaiter().GetResult();
+                return;
 
-            var a = new LoadBenchmarks();
-            a.NumEntities = 5000;
-            a.LoadEntities();
-            a.LoadAndRefreshEntities();
-            a.LoadAndMergeEntities();
-            return;
+                const int num = 1;
+                for (int i = 0; i < 1; ++i)
+                {
+                    var a = new LoadBenchmarks();
+                    a.NumEntities = num;
+                    a.LoadEntities();
+                    a.LoadAndRefreshEntities();
+                    a.LoadAndMergeEntities();
 
-            //BenchmarkRunner.Run<EntityBenchmarks>();
-            //BenchmarkRunner.Run<EntitySetBenchmarks>();
-            BenchmarkRunner.Run<ChangeSetBenchmarks>();
-            BenchmarkRunner.Run<LoadBenchmarks>();
+                    var s = new ChangeSetBenchmarks();
+                    s.NumEntities = num;
+                    s.SubmitAdded();
+
+                    var es = new EntitySetBenchmarks();
+                    es.NumEntities = num;
+                    es.Add();
+                    es.AddAndDetach();
+                    es.AddAndRemove();
+                    es.Attach();
+                    es.AttachAndDetach();
+                    es.AttachAndModify();
+                    es.AttachAndRemove();
+                }
+            }
+            else
+            {
+                BenchmarkRunner.Run<E2Ebenchmarks>();
+                //BenchmarkRunner.Run<EntityBenchmarks>();
+                //BenchmarkRunner.Run<EntitySetBenchmarks>();
+                //BenchmarkRunner.Run<ChangeSetBenchmarks>();
+                //BenchmarkRunner.Run<LoadBenchmarks>();
+            }
         }
 
         private static async Task RunBenchmarks()
