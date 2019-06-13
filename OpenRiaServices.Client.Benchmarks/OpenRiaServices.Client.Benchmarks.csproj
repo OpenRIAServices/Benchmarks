@@ -34,6 +34,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -112,7 +113,6 @@
     <PackageReference Include="System.Net.Http.WinHttpHandler">
       <Version>4.5.4</Version>
     </PackageReference>
-    <PackageReference Include="OpenRiaServices.Client.Core" Version="4.6.0" />
     <PackageReference Include="BenchmarkDotNet">
       <Version>0.11.5</Version>
     </PackageReference>
