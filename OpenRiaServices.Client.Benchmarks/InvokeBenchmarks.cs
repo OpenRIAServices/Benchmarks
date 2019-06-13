@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Linq.Expressions;
 using BenchmarkDotNet.Attributes;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
-using BenchmarkDotNet.Attributes.Jobs;
 using System.ComponentModel;
 using System.Reflection;
 

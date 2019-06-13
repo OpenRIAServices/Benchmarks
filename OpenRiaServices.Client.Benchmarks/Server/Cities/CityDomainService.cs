@@ -44,6 +44,9 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
     [EnableClientAccess]
     public class CityDomainService : BaseDomainService
     {
+        // The value which GetCities should return
+        public static List<City> GetCitiesResult { get; set;  }
+
         private readonly CityData _cityData = new CityData();
 
         // maintain list of deleted cities
@@ -51,9 +54,9 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         private static List<CityWithEditHistory> _deletedCities = new List<CityWithEditHistory>();
 
         [Query]
-        public IQueryable<City> GetCities()
+        public IEnumerable<City> GetCities()
         {
-            return this._cityData.Cities.AsQueryable<City>();
+            return GetCitiesResult;
         }
 
         [Query]

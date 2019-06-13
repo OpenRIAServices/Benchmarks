@@ -77,9 +77,15 @@
     <Compile Include="Server\E2Ebenchmarks.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\OpenRiaPlayground\HttpClient\OpenRiaServices.DomainServices.PortableWeb\OpenRiaServices.DomainServices.PortableWeb.csproj">
+      <Project>{46a37a73-6888-45ee-895c-0b9d7349511f}</Project>
+      <Name>OpenRiaServices.DomainServices.PortableWeb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Client.Web\Framework\OpenRiaServices.DomainServices.Client.Web.csproj">
       <Project>{BDB2F9A3-5FC7-45FD-8496-B23752232688}</Project>
       <Name>OpenRiaServices.DomainServices.Client.Web</Name>
@@ -100,19 +106,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows">
+      <Version>0.11.5</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http.WinHttpHandler">
+      <Version>4.5.4</Version>
+    </PackageReference>
+    <PackageReference Include="OpenRiaServices.Client.Core" Version="4.6.0" />
     <PackageReference Include="BenchmarkDotNet">
-      <Version>0.10.14</Version>
+      <Version>0.11.5</Version>
     </PackageReference>
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows">
       <Version>0.10.14</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

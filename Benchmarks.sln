@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2037
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28902.138
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenRiaServices", "OpenRiaServices", "{CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.Server", "..\OpenRiaServices\OpenRiaServices.DomainServices.Server\Framework\OpenRiaServices.DomainServices.Server.csproj", "{72E74082-7928-4A70-83C1-49806B942FCB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.Client.Web", "..\OpenRiaServices\OpenRiaServices.DomainServices.Client.Web\Framework\OpenRiaServices.DomainServices.Client.Web.csproj", "{BDB2F9A3-5FC7-45FD-8496-B23752232688}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.PortableWeb", "..\OpenRiaPlayground\HttpClient\OpenRiaServices.DomainServices.PortableWeb\OpenRiaServices.DomainServices.PortableWeb.csproj", "{46A37A73-6888-45EE-895C-0B9D7349511F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +56,12 @@ Global
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Signed|Any CPU.Build.0 = Release|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Signed|Any CPU.ActiveCfg = Release|Any CPU
+		{46A37A73-6888-45EE-895C-0B9D7349511F}.Signed|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,8 +72,15 @@ Global
 		{E3844512-48A8-451A-9BE4-AC7793016B9D} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{72E74082-7928-4A70-83C1-49806B942FCB} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
+		{46A37A73-6888-45EE-895C-0B9D7349511F} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {593EA07D-8EEC-4DAA-9B48-DA7717C3A80F}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
