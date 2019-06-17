@@ -37,7 +37,7 @@ namespace ClientBenchmarks.Server
    // [EtwProfiler]
     //[LegacyJitX86Job, RyuJitX64Job]
    // [ConcurrencyVisualizerProfiler]
-   [ShortRunJob]
+   //[ShortRunJob]
    //[RyuJitX64Job]
     public class E2Ebenchmarks
     {
@@ -87,8 +87,9 @@ namespace ClientBenchmarks.Server
             }
 
             _ctx = new CityDomainContext(_uri);
-
             CityDomainService.GetCitiesResult = CreateValidCities(NumEntities).ToList();
+
+            _ctx.LoadAsync(_ctx.GetCountiesQuery()).GetAwaiter().GetResult();
         }
 
         public static IEnumerable<OpenRiaServices.Client.Benchmarks.Server.Cities.City> CreateValidCities(int num)
