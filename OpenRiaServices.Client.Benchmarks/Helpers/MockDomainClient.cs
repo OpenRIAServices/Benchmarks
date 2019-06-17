@@ -37,7 +37,7 @@ namespace ClientBenchmarks.Helpers
             return Task.FromResult(QueryResult);
         }
 
-        protected override InvokeCompletedResult EndInvokeCore(IAsyncResult asyncResult)
+        protected override Task<InvokeCompletedResult> InvokeAsyncCore(InvokeArgs invokeArgs, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
