@@ -2,6 +2,8 @@
 using ClientBenchmarks.Server;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using OpenRiaServices.DomainServices.Client;
+using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace ClientBenchmarks
@@ -14,9 +16,11 @@ namespace ClientBenchmarks
         {
             if (onlyProfiling)
             {
-                //BenchmarkRunner.Run<E2Ebenchmarks>();
-                //return;
                 Task.Run(() => RunBenchmarksAsyncParallel()).Wait();
+
+                Task.Run(() => RunPipelined()).Wait();
+                Console.WriteLine("PAUSE");
+                Console.ReadLine();
                 return;
 
                 const int num = 1;
@@ -53,56 +57,40 @@ namespace ClientBenchmarks
             }
         }
 
-        private static void RunBenchmarks()
-        {
-            var b = new E2Ebenchmarks();
-            b.DomainClient = DomainClientType.HttpBinary;
-            b.Start();
-
-            for (int i = 0; i < 1000; ++i)
-            {
-                // We don't have a sync context so continuations can run in background
-                b.GetCititesReuseContext().GetAwaiter().GetResult();
-            }
-
-            b.Stop();
-        }
-
-        private static async Task RunBenchmarksAsync()
+        private static async Task RunBenchmarksAsyncParallel()
         {
             var b = new E2Ebenchmarks();
             b.DomainClient = DomainClientType.WcfBinary;
             b.Start();
 
-            for (int i = 0; i < 1000; ++i)
-            {
-                // We don't have a sync context so continuations can run in background
-                await b.GetCititesReuseContext().ConfigureAwait(false);
-            }
+            await b.GetCititesReuseContext();
 
+            var sw = Stopwatch.StartNew();
+            await b.RunBenchmarksAsyncParallel(100, 2);
+
+            Console.WriteLine("RunBenchmarksAsyncParallel elapsed time is {0}", sw.Elapsed);
             b.Stop();
         }
-
-        private static async Task RunBenchmarksAsyncParallel()
+        private static async Task RunPipelined()
         {
             var b = new E2Ebenchmarks();
-            b.DomainClient = DomainClientType.HttpBinary;
+            b.DomainClient = DomainClientType.WcfBinary;
             b.Start();
 
-            const int total = 1000;
-            const int concurrent = 8;
-            const int outer = total / concurrent;
+            await b.GetCititesReuseContext();
 
-            var tasks = new Task<LoadResult<City>>[concurrent];
+            var sw = Stopwatch.StartNew();
 
-            for (int i = 0; i < outer; ++i)
-            {
-                for (int j = 0; j < concurrent; ++j)
-                    tasks[j] = b.GetCititesReuseContext();
+            await b.PipelinedLoadAsync(100, 2);
 
-                // We don't have a sync context so continuations can run in background
-                var results = await Task.WhenAll(tasks);
-            }
+            Console.WriteLine("RunPipelined elapsed time is {0} for 2 ", sw.Elapsed);
+
+
+            sw = Stopwatch.StartNew();
+
+            await b.PipelinedLoadAsync(1000, 4);
+
+            Console.WriteLine("RunPipelined elapsed time is {0} for 4 ", sw.Elapsed);
 
             b.Stop();
         }

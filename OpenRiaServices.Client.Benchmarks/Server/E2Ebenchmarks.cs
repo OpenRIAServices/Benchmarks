@@ -7,6 +7,7 @@ using System.ServiceModel.Activation;
 using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
 using OpenRiaServices.DomainServices.Client;
@@ -16,7 +17,7 @@ using server::OpenRiaServices.DomainServices.Server;
 
 namespace ClientBenchmarks.Server
 {
-   public enum DomainClientType
+    public enum DomainClientType
     {
         WcfBinary,
         HttpBinary,
@@ -33,7 +34,11 @@ namespace ClientBenchmarks.Server
     }
 
     [MemoryDiagnoser]
+   // [EtwProfiler]
     //[LegacyJitX86Job, RyuJitX64Job]
+   // [ConcurrencyVisualizerProfiler]
+   //[ShortRunJob]
+   //[RyuJitX64Job]
     public class E2Ebenchmarks
     {
         const int _port = 60001;
@@ -41,18 +46,19 @@ namespace ClientBenchmarks.Server
         DomainServiceHost _host;
         CityDomainContext _ctx;
 
-        [Params(/*10,*/ 100, 1000)]
+        [Params(/*10,*/ 100/*, 1000*/)]
         public int NumEntities { get; set; } = 500;
 
         //[Params(DomainClientType.WcfBinary, DomainClientType.HttpBinary)]
-        [Params(DomainClientType.HttpBinary, DomainClientType.WcfBinary)]
-        public DomainClientType DomainClient { get; set;}
+        [Params(DomainClientType.WcfBinary)]
+        public DomainClientType DomainClient { get; set; }
 
         [IterationSetup]
         public void Start()
         {
-            
+
             _host = new DomainServiceHost(typeof(CityDomainService), _uri);
+
             //other relevent code to configure host's end point etc
             if (_host.Description.Behaviors.Contains(typeof(AspNetCompatibilityRequirementsAttribute)))
             {
@@ -62,7 +68,7 @@ namespace ClientBenchmarks.Server
 
             _host.Open();
 
-            switch(DomainClient)
+            switch (DomainClient)
             {
                 case DomainClientType.HttpBinary:
                     DomainContext.DomainClientFactory = new OpenRiaServices.DomainServices.Client.PortableWeb.WebApiDomainClientFactory();
@@ -70,7 +76,7 @@ namespace ClientBenchmarks.Server
                 case DomainClientType.HttpBinaryWinHttp:
                     DomainContext.DomainClientFactory = new OpenRiaServices.DomainServices.Client.PortableWeb.WebApiDomainClientFactory()
                     {
-                         HttpClientHandler = new WinHttpHandler() {}
+                        HttpClientHandler = new WinHttpHandler() { }
                     };
                     break;
                 case DomainClientType.WcfBinary:
@@ -81,8 +87,9 @@ namespace ClientBenchmarks.Server
             }
 
             _ctx = new CityDomainContext(_uri);
-
             CityDomainService.GetCitiesResult = CreateValidCities(NumEntities).ToList();
+
+            _ctx.LoadAsync(_ctx.GetCountiesQuery()).GetAwaiter().GetResult();
         }
 
         public static IEnumerable<OpenRiaServices.Client.Benchmarks.Server.Cities.City> CreateValidCities(int num)
@@ -110,6 +117,54 @@ namespace ClientBenchmarks.Server
         public async Task<LoadResult<OpenRiaServices.Client.Benchmarks.Client.Cities.City>> GetCititesReuseContext()
         {
             return await _ctx.LoadAsync(_ctx.GetCitiesQuery()).ConfigureAwait(false);
+        }
+
+
+        const int ParallelInvokeIterations = 400;
+
+        [Arguments(ParallelInvokeIterations, 1)]
+        [Arguments(ParallelInvokeIterations, 2)]
+        [Arguments(ParallelInvokeIterations, 4)]
+        [Benchmark(OperationsPerInvoke = ParallelInvokeIterations)]
+        public async Task RunBenchmarksAsyncParallel(int total = 1000, int concurrent = 8)
+        {
+            int outer = total / concurrent;
+            var tasks = new Task<LoadResult<OpenRiaServices.Client.Benchmarks.Client.Cities.City>>[concurrent];
+
+            for (int i = 0; i < outer; ++i)
+            {
+                for (int j = 0; j < concurrent; ++j)
+                    tasks[j] = GetCititesReuseContext();
+
+                var results = await Task.WhenAll(tasks);
+            }
+        }
+
+        const int PipeLineInvocations = 400;
+
+        [Arguments(PipeLineInvocations, 1)]
+        [Arguments(PipeLineInvocations, 2)]
+        [Arguments(PipeLineInvocations, 4)]
+        [Benchmark(OperationsPerInvoke = PipeLineInvocations)]
+        public async Task PipelinedLoadAsync(int total = 10, int depth = 2)
+        {
+            var tasks = new Task[depth];
+
+            // start loading
+            for (int i = 0; i < tasks.Length; ++i)
+                tasks[i] = GetCititesReuseContext();
+
+            int current = 0;
+            for (int i = tasks.Length; i < total; ++i)
+            {
+                await tasks[current];
+                tasks[current] = GetCititesReuseContext();
+                current = (current + 1) % depth;
+            }
+
+            // Finish loading the rest
+            for (int i = 0; i < tasks.Length; ++i)
+                await tasks[i];
         }
 
         [Benchmark]
