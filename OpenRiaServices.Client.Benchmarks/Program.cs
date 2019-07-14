@@ -1,10 +1,16 @@
-﻿using BenchmarkDotNet.Running;
+﻿extern alias server;
+
+using BenchmarkDotNet.Running;
 using ClientBenchmarks.Server;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using OpenRiaServices.DomainServices.Client;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Linq;
+using server::OpenRiaServices.DomainServices.Hosting;
+using OpenRiaServices.Client.Benchmarks.Server.Cities;
+using System.ServiceModel.Activation;
 
 namespace ClientBenchmarks
 {
@@ -14,6 +20,14 @@ namespace ClientBenchmarks
 
         private static void Main(string[] args)
         {
+            if (args.Length > 0 && args.Contains("server"))
+            {
+                Uri uri = new Uri($"http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
+                CityDomainService.GetCitiesResult = E2Ebenchmarks.CreateValidCities(100).ToList();
+                StartServerAndWaitForKey(uri, typeof(CityDomainService));
+                return;
+            }
+
             if (onlyProfiling)
             {
                 Task.Run(() => RunBenchmarksAsyncParallel()).Wait();
@@ -49,11 +63,30 @@ namespace ClientBenchmarks
             }
             else
             {
-                BenchmarkRunner.Run<E2Ebenchmarks>();
+                BenchmarkRunner.Run<LoadBenchmarks>();
+                //BenchmarkRunner.Run<E2Ebenchmarks>();
                 //BenchmarkRunner.Run<EntityBenchmarks>();
                 //BenchmarkRunner.Run<EntitySetBenchmarks>();
                 //BenchmarkRunner.Run<ChangeSetBenchmarks>();
-                //BenchmarkRunner.Run<LoadBenchmarks>();
+
+            }
+        }
+
+        private static void StartServerAndWaitForKey(Uri uri, Type type)
+        {
+            using (var host = new DomainServiceHost(type, uri))
+            {
+                //other relevent code to configure host's end point etc
+                if (host.Description.Behaviors.Contains(typeof(AspNetCompatibilityRequirementsAttribute)))
+                {
+                    var compatibilityRequirementsAttribute = host.Description.Behaviors[typeof(AspNetCompatibilityRequirementsAttribute)] as AspNetCompatibilityRequirementsAttribute;
+                    compatibilityRequirementsAttribute.RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed;
+                }
+
+                host.Open();
+                Console.WriteLine("Press ENTER to exit");
+                Console.ReadLine();
+                host.Close();
             }
         }
 
