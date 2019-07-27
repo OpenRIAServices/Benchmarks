@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClientBenchmarks</RootNamespace>
     <AssemblyName>ClientBenchmarks</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
@@ -41,6 +41,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
@@ -77,6 +78,7 @@
     <Compile Include="Server\Cities\CityEntities.cs" />
     <Compile Include="Server\Cities\CityTypes.cs" />
     <Compile Include="Server\E2Ebenchmarks.cs" />
+    <Compile Include="Server\Example\ExampleService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -95,6 +97,11 @@
     <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client\Framework\OpenRiaServices.DomainServices.Client.csproj">
       <Project>{3f4fbbd2-a634-44c7-9def-d71f349e706c}</Project>
       <Name>OpenRiaServices.DomainServices.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Hosting.Endpoint\Framework\OpenRiaServices.DomainServices.Hosting.Endpoint.csproj">
+      <Project>{6187a6d3-2bc0-4c90-a1af-8b479888c343}</Project>
+      <Name>OpenRiaServices.DomainServices.Hosting.Endpoint</Name>
+      <Aliases>server</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Hosting\Framework\OpenRiaServices.DomainServices.Hosting.csproj">
       <Project>{e3844512-48a8-451a-9be4-ac7793016b9d}</Project>

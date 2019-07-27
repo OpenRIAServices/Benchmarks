@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.PortableWeb", "..\OpenRiaPlayground\HttpClient\OpenRiaServices.DomainServices.PortableWeb\OpenRiaServices.DomainServices.PortableWeb.csproj", "{46A37A73-6888-45EE-895C-0B9D7349511F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.Hosting.Endpoint", "..\OpenRiaServices\OpenRiaServices.DomainServices.Hosting.Endpoint\Framework\OpenRiaServices.DomainServices.Hosting.Endpoint.csproj", "{6187A6D3-2BC0-4C90-A1AF-8B479888C343}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,12 @@ Global
 		{46A37A73-6888-45EE-895C-0B9D7349511F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{46A37A73-6888-45EE-895C-0B9D7349511F}.Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{46A37A73-6888-45EE-895C-0B9D7349511F}.Signed|Any CPU.Build.0 = Release|Any CPU
+		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Signed|Any CPU.ActiveCfg = Debug|Any CPU
+		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Signed|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +81,7 @@ Global
 		{72E74082-7928-4A70-83C1-49806B942FCB} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{46A37A73-6888-45EE-895C-0B9D7349511F} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
+		{6187A6D3-2BC0-4C90-A1AF-8B479888C343} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {593EA07D-8EEC-4DAA-9B48-DA7717C3A80F}

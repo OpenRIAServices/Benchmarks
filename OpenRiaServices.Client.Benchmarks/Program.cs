@@ -11,26 +11,29 @@ using System.Linq;
 using server::OpenRiaServices.DomainServices.Hosting;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
 using System.ServiceModel.Activation;
+using ClientBenchmarks.Server.Example;
+using System.Configuration;
 
 namespace ClientBenchmarks
 {
     internal class Program
     {
-        static bool onlyProfiling = false;
+        static bool onlyProfiling = true;
 
         private static void Main(string[] args)
         {
             if (args.Length > 0 && args.Contains("server"))
             {
                 Uri uri = new Uri($"http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
-                CityDomainService.GetCitiesResult = E2Ebenchmarks.CreateValidCities(100).ToList();
+                CityDomainService.GetCitiesResult = E2Ebenchmarks.CreateValidCities(1).ToList();
+                StartServerAndWaitForKey(uri, typeof(ExampelService));
                 StartServerAndWaitForKey(uri, typeof(CityDomainService));
                 return;
             }
 
-            if (onlyProfiling)
+            if (onlyProfiling || (args.Length > 0 && args[0].Contains("profile")))
             {
-                Task.Run(() => RunBenchmarksAsyncParallel()).Wait();
+                //Task.Run(() => RunBenchmarksAsyncParallel()).Wait();
 
                 Task.Run(() => RunPipelined()).Wait();
                 Console.WriteLine("PAUSE");
@@ -74,6 +77,14 @@ namespace ClientBenchmarks
 
         private static void StartServerAndWaitForKey(Uri uri, Type type)
         {
+            if (DomainServicesSection.Current.Endpoints.Count == 1)
+            {
+                DomainServicesSection.Current.Endpoints.Add(
+                    new ProviderSettings("soap", typeof(SoapXmlEndpointFactory).AssemblyQualifiedName));
+                DomainServicesSection.Current.Endpoints.Add(
+                    new ProviderSettings("json", typeof(JsonEndpointFactory).AssemblyQualifiedName));
+            }
+
             using (var host = new DomainServiceHost(type, uri))
             {
                 //other relevent code to configure host's end point etc
@@ -84,6 +95,8 @@ namespace ClientBenchmarks
                 }
 
                 host.Open();
+
+                Console.WriteLine($"DomainService {type.Name} running at {uri}");
                 Console.WriteLine("Press ENTER to exit");
                 Console.ReadLine();
                 host.Close();
@@ -107,21 +120,31 @@ namespace ClientBenchmarks
         private static async Task RunPipelined()
         {
             var b = new E2Ebenchmarks();
+            b.NumEntities = 10;
             b.DomainClient = DomainClientType.WcfBinary;
             b.Start();
 
             await b.GetCititesReuseContext();
 
+            Console.WriteLine("PRESS KEY TO START");
+            Console.ReadLine();
+
             var sw = Stopwatch.StartNew();
 
-            await b.PipelinedLoadAsync(100, 2);
+            await b.PipelinedLoadAsync(5000, 20);
 
             Console.WriteLine("RunPipelined elapsed time is {0} for 2 ", sw.Elapsed);
 
 
             sw = Stopwatch.StartNew();
 
-            await b.PipelinedLoadAsync(1000, 4);
+            await b.PipelinedLoadAsync(5000, 50);
+
+            Console.WriteLine("RunPipelined elapsed time is {0} for 4 ", sw.Elapsed);
+
+            sw = Stopwatch.StartNew();
+
+            await b.PipelinedLoadAsync(5000, 100);
 
             Console.WriteLine("RunPipelined elapsed time is {0} for 4 ", sw.Elapsed);
 

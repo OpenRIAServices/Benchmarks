@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using OpenRiaServices;
 using server::OpenRiaServices.DomainServices;
 using server::OpenRiaServices.DomainServices.Hosting;
@@ -47,7 +48,7 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         // The value which GetCities should return
         public static List<City> GetCitiesResult { get; set;  }
 
-        private readonly CityData _cityData = new CityData();
+        private static readonly CityData _cityData = new CityData();
 
         // maintain list of deleted cities
         // this list is static because each query creates new domain service instance
@@ -56,19 +57,27 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         [Query]
         public IEnumerable<City> GetCities()
         {
+       
+            return GetCitiesResult;
+        }
+
+        [Query]
+        public async Task<IEnumerable<City>> GetCitiesWithDelay()
+        {
+            await Task.Delay(10);
             return GetCitiesResult;
         }
 
         [Query]
         public IQueryable<CityWithInfo> GetCitiesWithInfo()
         {
-            return this._cityData.Cities.OfType<CityWithInfo>().AsQueryable();
+            return _cityData.Cities.OfType<CityWithInfo>().AsQueryable();
         }
 
         [Query]
         public IQueryable<CityWithEditHistory> GetCitiesWithEditHistory()
         {
-            return this._cityData.Cities.OfType<CityWithEditHistory>().AsQueryable();
+            return _cityData.Cities.OfType<CityWithEditHistory>().AsQueryable();
         }
 
         [Query]
@@ -86,26 +95,26 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
                 // check being here
                 throw new ArgumentNullException("state");
             }
-            IEnumerable<City> cities = this._cityData.Cities.Where(c => c.StateName.Equals(state));
+            IEnumerable<City> cities = _cityData.Cities.Where(c => c.StateName.Equals(state));
             return cities.AsQueryable<City>();
         }
 
         [Query]
         public IQueryable<County> GetCounties()
         {
-            return this._cityData.Counties.AsQueryable<County>();
+            return _cityData.Counties.AsQueryable<County>();
         }
 
         [Query]
         public IQueryable<State> GetStates()
         {
-            return this._cityData.States.AsQueryable<State>();
+            return _cityData.States.AsQueryable<State>();
         }
 
         [Query]
         public IQueryable<State> GetStatesInShippingZone(ShippingZone shippingZone)
         {
-            return this._cityData.States.Where(s => s.ShippingZone == shippingZone).AsQueryable<State>();
+            return _cityData.States.Where(s => s.ShippingZone == shippingZone).AsQueryable<State>();
         }
 
         [Update]
@@ -121,27 +130,27 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         [Query]
         public IQueryable<Zip> GetZips()
         {
-            return this._cityData.Zips.AsQueryable<Zip>();
+            return _cityData.Zips.AsQueryable<Zip>();
         }
 
         [Query]
         [RequiresAuthentication]
         public IQueryable<Zip> GetZipsIfAuthenticated()
         {
-            return this._cityData.Zips.AsQueryable<Zip>();
+            return _cityData.Zips.AsQueryable<Zip>();
         }
 
         [Query]
         [RequiresRole("manager")]
         public IQueryable<Zip> GetZipsIfInRole()
         {
-            return this._cityData.Zips.AsQueryable<Zip>();
+            return _cityData.Zips.AsQueryable<Zip>();
         }
 
         [Query]
         public IQueryable<Zip> GetZipsIfUser()
         {
-            return this._cityData.Zips.AsQueryable<Zip>();
+            return _cityData.Zips.AsQueryable<Zip>();
         }
 
         #region CUD methods
@@ -150,7 +159,7 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         public void InsertCity(City city)
         {
             System.Diagnostics.Debug.WriteLine("CityDomainService.InsertCity(" + city.ToString() + ")");
-            this._cityData.Cities.Add(city);
+            _cityData.Cities.Add(city);
         }
 
         [Update]
@@ -159,7 +168,7 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         {
             System.Diagnostics.Debug.WriteLine("CityDomainService.UpdateCity(" + city.ToString() + ")");
             this.DeleteCity(city);
-            this._cityData.Cities.Add(city);
+            _cityData.Cities.Add(city);
         }
 
         [Delete]
@@ -168,14 +177,14 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         {
             System.Diagnostics.Debug.WriteLine("CityDomainService.DeleteCity(" + city.ToString() + ")");
 
-            City cityInList = this._cityData.Cities.FirstOrDefault(c => string.Equals(c.Name, city.Name) &&
+            City cityInList = _cityData.Cities.FirstOrDefault(c => string.Equals(c.Name, city.Name) &&
                                                             string.Equals(c.StateName, city.StateName) &&
                                                             string.Equals(c.CountyName, city.CountyName));
             if (cityInList == null)
             {
                 throw new InvalidOperationException("City must be in our list first: " + city);
             }
-            this._cityData.Cities.Remove(cityInList);
+            _cityData.Cities.Remove(cityInList);
         }
 
         [Insert]
