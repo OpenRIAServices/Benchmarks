@@ -90,25 +90,25 @@
       <Project>{46a37a73-6888-45ee-895c-0b9d7349511f}</Project>
       <Name>OpenRiaServices.DomainServices.PortableWeb</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Client.Web\Framework\OpenRiaServices.DomainServices.Client.Web.csproj">
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.DomainServices.Client.Web\Framework\OpenRiaServices.DomainServices.Client.Web.csproj">
       <Project>{BDB2F9A3-5FC7-45FD-8496-B23752232688}</Project>
       <Name>OpenRiaServices.DomainServices.Client.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client\Framework\OpenRiaServices.DomainServices.Client.csproj">
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.DomainServices.Client\Framework\OpenRiaServices.DomainServices.Client.csproj">
       <Project>{3f4fbbd2-a634-44c7-9def-d71f349e706c}</Project>
       <Name>OpenRiaServices.DomainServices.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Hosting.Endpoint\Framework\OpenRiaServices.DomainServices.Hosting.Endpoint.csproj">
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.DomainServices.Hosting.Endpoint\Framework\OpenRiaServices.DomainServices.Hosting.Endpoint.csproj">
       <Project>{6187a6d3-2bc0-4c90-a1af-8b479888c343}</Project>
       <Name>OpenRiaServices.DomainServices.Hosting.Endpoint</Name>
       <Aliases>server</Aliases>
     </ProjectReference>
-    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Hosting\Framework\OpenRiaServices.DomainServices.Hosting.csproj">
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.DomainServices.Hosting\Framework\OpenRiaServices.DomainServices.Hosting.csproj">
       <Project>{e3844512-48a8-451a-9be4-ac7793016b9d}</Project>
       <Name>OpenRiaServices.DomainServices.Hosting</Name>
       <Aliases>server</Aliases>
     </ProjectReference>
-    <ProjectReference Include="..\..\OpenRiaServices\OpenRiaServices.DomainServices.Server\Framework\OpenRiaServices.DomainServices.Server.csproj">
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.DomainServices.Server\Framework\OpenRiaServices.DomainServices.Server.csproj">
       <Project>{72e74082-7928-4a70-83c1-49806b942fcb}</Project>
       <Name>OpenRiaServices.DomainServices.Server</Name>
       <Aliases>server</Aliases>
