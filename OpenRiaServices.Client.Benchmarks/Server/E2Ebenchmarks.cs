@@ -34,26 +34,29 @@ namespace ClientBenchmarks.Server
     }
 
     [MemoryDiagnoser]
-   // [EtwProfiler]
+    // [EtwProfiler]
     //[LegacyJitX86Job, RyuJitX64Job]
-   // [ConcurrencyVisualizerProfiler]
-   //[ShortRunJob]
-   //[RyuJitX64Job]
+    // [ConcurrencyVisualizerProfiler]
+    //[ShortRunJob]
+    //[MediumRunJob]
+    //[RyuJitX64Job]
     public class E2Ebenchmarks
     {
-        const int _port = 60001;
-        Uri _uri = new Uri($"http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
+        Uri _uri = new Uri("http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
+        //Uri _clientUri = new Uri("http://localhost.fiddler/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
+        Uri _clientUri = new Uri("http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
         DomainServiceHost _host;
         CityDomainContext _ctx;
 
-        [Params(/*10,*/ 100/*, 1000*/)]
+        [Params(10, 100, 1000)]
         public int NumEntities { get; set; } = 500;
 
         //[Params(DomainClientType.WcfBinary, DomainClientType.HttpBinary)]
         [Params(DomainClientType.WcfBinary)]
         public DomainClientType DomainClient { get; set; }
 
-        [IterationSetup]
+        [GlobalSetup]
+
         public void Start()
         {
 
@@ -67,7 +70,6 @@ namespace ClientBenchmarks.Server
             }
 
             _host.Open();
-
             switch (DomainClient)
             {
                 case DomainClientType.HttpBinary:
@@ -86,10 +88,10 @@ namespace ClientBenchmarks.Server
                     throw new NotImplementedException();
             }
 
-            _ctx = new CityDomainContext(_uri);
+            _ctx = new CityDomainContext(_clientUri);
             CityDomainService.GetCitiesResult = CreateValidCities(NumEntities).ToList();
 
-            _ctx.LoadAsync(_ctx.GetCountiesQuery()).GetAwaiter().GetResult();
+            _ctx.LoadAsync(_ctx.GetCitiesQuery()).GetAwaiter().GetResult();
         }
 
         public static IEnumerable<OpenRiaServices.Client.Benchmarks.Server.Cities.City> CreateValidCities(int num)
@@ -100,7 +102,7 @@ namespace ClientBenchmarks.Server
             }
         }
 
-        [IterationCleanup]
+        [GlobalCleanup]
         public void Stop()
         {
             _host.Close();
@@ -109,7 +111,7 @@ namespace ClientBenchmarks.Server
         [Benchmark]
         public async Task<LoadResult<OpenRiaServices.Client.Benchmarks.Client.Cities.City>> GetCititesUniqueContext()
         {
-            CityDomainContext ctx = new CityDomainContext(_uri);
+            CityDomainContext ctx = new CityDomainContext(_clientUri);
             return await ctx.LoadAsync(ctx.GetCitiesQuery()).ConfigureAwait(false);
         }
 
@@ -122,10 +124,10 @@ namespace ClientBenchmarks.Server
 
         const int ParallelInvokeIterations = 400;
 
-        [Arguments(ParallelInvokeIterations, 1)]
-        [Arguments(ParallelInvokeIterations, 2)]
-        [Arguments(ParallelInvokeIterations, 4)]
-        [Benchmark(OperationsPerInvoke = ParallelInvokeIterations)]
+        //[Arguments(ParallelInvokeIterations, 1)]
+        //[Arguments(ParallelInvokeIterations, 2)]
+        //[Arguments(ParallelInvokeIterations, 4)]
+        //[Benchmark(OperationsPerInvoke = ParallelInvokeIterations)]
         public async Task RunBenchmarksAsyncParallel(int total = 1000, int concurrent = 8)
         {
             int outer = total / concurrent;
@@ -142,10 +144,10 @@ namespace ClientBenchmarks.Server
 
         const int PipeLineInvocations = 400;
 
-        [Arguments(PipeLineInvocations, 1)]
-        [Arguments(PipeLineInvocations, 2)]
-        [Arguments(PipeLineInvocations, 4)]
-        [Benchmark(OperationsPerInvoke = PipeLineInvocations)]
+        //[Arguments(PipeLineInvocations, 1)]
+        //[Arguments(PipeLineInvocations, 2)]
+        //[Arguments(PipeLineInvocations, 4)]
+        //[Benchmark(OperationsPerInvoke = PipeLineInvocations)]
         public async Task PipelinedLoadAsync(int total = 10, int depth = 2)
         {
             var tasks = new Task[depth];
@@ -167,10 +169,10 @@ namespace ClientBenchmarks.Server
                 await tasks[i];
         }
 
-        [Benchmark]
+        //    [Benchmark]
         public async Task Submit()
         {
-            CityDomainContext ctx = new CityDomainContext(_uri);
+            CityDomainContext ctx = new CityDomainContext(_clientUri);
             foreach (var city in ChangeSetBenchmarks.CreateValidCities(NumEntities))
                 ctx.Cities.Add(city);
 
