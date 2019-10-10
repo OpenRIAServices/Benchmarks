@@ -121,6 +121,11 @@ namespace ClientBenchmarks.Server
             return await _ctx.LoadAsync(_ctx.GetCitiesQuery()).ConfigureAwait(false);
         }
 
+        [Benchmark]
+        public Task<InvokeResult<string>> InvokeAsync()
+        {
+            return _ctx.EchoAsync("a");
+        }
 
         const int ParallelInvokeIterations = 400;
 
