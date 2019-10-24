@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>ClientBenchmarks.Server.E2Ebenchmarks-20191018-084602</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.11.5, OS=Windows 10.0.18362
+Intel Core i5-2500K CPU 3.30GHz (Sandy Bridge), 1 CPU, 4 logical and 4 physical cores
+Frequency=14318180 Hz, Resolution=69.8413 ns, Timer=HPET
+  [Host]     : .NET Framework 4.7.2 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.8.4010.0
+  DefaultJob : .NET Framework 4.7.2 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.8.4010.0
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>              Method</th><th>NumEntities</th><th>DomainClient</th><th>total</th><th>concurrent</th><th>depth</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen 0</th><th>Gen 1</th><th>Gen 2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>RunBenchmarksAsyncParallel</td><td>10</td><td>WcfBinary</td><td>40</td><td>1</td><td>?</td><td>454.0 us</td><td>8.911 us</td><td>8.752 us</td><td>17.1875</td><td>-</td><td>-</td><td>54.78 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>10</td><td>WcfBinary</td><td>40</td><td>?</td><td>1</td><td>450.4 us</td><td>6.753 us</td><td>6.317 us</td><td>17.1875</td><td>-</td><td>-</td><td>54.56 KB</td>
+</tr><tr><td>RunBenchmarksAsyncParallel</td><td>10</td><td>WcfBinary</td><td>40</td><td>2</td><td>?</td><td>299.1 us</td><td>1.433 us</td><td>1.270 us</td><td>17.5781</td><td>0.7813</td><td>-</td><td>55.5 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>10</td><td>WcfBinary</td><td>40</td><td>?</td><td>2</td><td>243.0 us</td><td>4.802 us</td><td>7.890 us</td><td>17.5781</td><td>2.3438</td><td>-</td><td>55.26 KB</td>
+</tr><tr><td>RunBenchmarksAsyncParallel</td><td>10</td><td>WcfBinary</td><td>40</td><td>4</td><td>?</td><td>244.9 us</td><td>2.419 us</td><td>2.263 us</td><td>17.1875</td><td>2.7344</td><td>-</td><td>55.43 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>10</td><td>WcfBinary</td><td>40</td><td>?</td><td>4</td><td>186.3 us</td><td>2.978 us</td><td>2.486 us</td><td>16.7969</td><td>3.9063</td><td>-</td><td>55.41 KB</td>
+</tr><tr><td>GetCititesUniqueContext</td><td>10</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>507.3 us</td><td>9.926 us</td><td>14.550 us</td><td>20.0195</td><td>0.4883</td><td>-</td><td>63.44 KB</td>
+</tr><tr><td>GetCititesReuseContext</td><td>10</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>451.1 us</td><td>8.870 us</td><td>13.277 us</td><td>17.5781</td><td>-</td><td>-</td><td>54.84 KB</td>
+</tr><tr><td>InvokeAsync</td><td>10</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>459.0 us</td><td>7.499 us</td><td>7.015 us</td><td>15.1367</td><td>-</td><td>-</td><td>47.63 KB</td>
+</tr><tr><td>RunBenchmarksAsyncParallel</td><td>100</td><td>WcfBinary</td><td>40</td><td>1</td><td>?</td><td>912.9 us</td><td>18.090 us</td><td>22.878 us</td><td>33.9286</td><td>7.1429</td><td>-</td><td>117.13 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>100</td><td>WcfBinary</td><td>40</td><td>?</td><td>1</td><td>946.8 us</td><td>18.651 us</td><td>22.905 us</td><td>33.9286</td><td>7.1429</td><td>-</td><td>117.01 KB</td>
+</tr><tr><td>RunBenchmarksAsyncParallel</td><td>100</td><td>WcfBinary</td><td>40</td><td>2</td><td>?</td><td>508.5 us</td><td>5.198 us</td><td>4.862 us</td><td>32.0313</td><td>10.1563</td><td>-</td><td>127.57 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>100</td><td>WcfBinary</td><td>40</td><td>?</td><td>2</td><td>448.7 us</td><td>2.252 us</td><td>1.881 us</td><td>32.0313</td><td>9.3750</td><td>-</td><td>127.79 KB</td>
+</tr><tr><td>RunBenchmarksAsyncParallel</td><td>100</td><td>WcfBinary</td><td>40</td><td>4</td><td>?</td><td>387.6 us</td><td>6.167 us</td><td>5.768 us</td><td>30.4688</td><td>10.1563</td><td>-</td><td>117.68 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>100</td><td>WcfBinary</td><td>40</td><td>?</td><td>4</td><td>339.5 us</td><td>6.755 us</td><td>11.098 us</td><td>32.8125</td><td>13.2813</td><td>-</td><td>118.45 KB</td>
+</tr><tr><td>GetCititesUniqueContext</td><td>100</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>1,030.2 us</td><td>19.025 us</td><td>18.685 us</td><td>39.0625</td><td>11.7188</td><td>-</td><td>153.87 KB</td>
+</tr><tr><td>GetCititesReuseContext</td><td>100</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>950.4 us</td><td>18.998 us</td><td>32.260 us</td><td>35.1563</td><td>7.8125</td><td>-</td><td>118.56 KB</td>
+</tr><tr><td>InvokeAsync</td><td>100</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>467.2 us</td><td>1.991 us</td><td>1.863 us</td><td>15.1367</td><td>-</td><td>-</td><td>47.69 KB</td>
+</tr><tr><td>RunBenchmarksAsyncParallel</td><td>1000</td><td>WcfBinary</td><td>40</td><td>1</td><td>?</td><td>4,564.8 us</td><td>20.837 us</td><td>19.491 us</td><td>208.3333</td><td>83.3333</td><td>-</td><td>700.92 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>1000</td><td>WcfBinary</td><td>40</td><td>?</td><td>1</td><td>4,571.2 us</td><td>25.822 us</td><td>24.154 us</td><td>200.0000</td><td>75.0000</td><td>-</td><td>699.95 KB</td>
+</tr><tr><td>RunBenchmarksAsyncParallel</td><td>1000</td><td>WcfBinary</td><td>40</td><td>2</td><td>?</td><td>2,706.7 us</td><td>19.268 us</td><td>18.023 us</td><td>195.0000</td><td>75.0000</td><td>-</td><td>712.61 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>1000</td><td>WcfBinary</td><td>40</td><td>?</td><td>2</td><td>2,501.1 us</td><td>15.689 us</td><td>14.675 us</td><td>205.0000</td><td>85.0000</td><td>-</td><td>715.99 KB</td>
+</tr><tr><td>RunBenchmarksAsyncParallel</td><td>1000</td><td>WcfBinary</td><td>40</td><td>4</td><td>?</td><td>2,175.9 us</td><td>28.530 us</td><td>25.292 us</td><td>220.8333</td><td>100.0000</td><td>8.3333</td><td>753.17 KB</td>
+</tr><tr><td>PipelinedLoadAsync</td><td>1000</td><td>WcfBinary</td><td>40</td><td>?</td><td>4</td><td>2,004.6 us</td><td>37.939 us</td><td>40.594 us</td><td>228.5714</td><td>110.7143</td><td>7.1429</td><td>757.14 KB</td>
+</tr><tr><td>GetCititesUniqueContext</td><td>1000</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>5,302.1 us</td><td>17.592 us</td><td>16.456 us</td><td>312.5000</td><td>156.2500</td><td>-</td><td>967.04 KB</td>
+</tr><tr><td>GetCititesReuseContext</td><td>1000</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>4,559.4 us</td><td>19.809 us</td><td>18.530 us</td><td>210.9375</td><td>78.1250</td><td>-</td><td>700.38 KB</td>
+</tr><tr><td>InvokeAsync</td><td>1000</td><td>WcfBinary</td><td>?</td><td>?</td><td>?</td><td>473.4 us</td><td>5.404 us</td><td>4.790 us</td><td>15.1367</td><td>-</td><td>-</td><td>47.72 KB</td>
+</tr></tbody></table>
+</body>
+</html>
