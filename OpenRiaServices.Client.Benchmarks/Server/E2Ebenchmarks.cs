@@ -72,6 +72,7 @@ namespace ClientBenchmarks.Server
             _host.Open();
             switch (DomainClient)
             {
+                /*
                 case DomainClientType.HttpBinary:
                     DomainContext.DomainClientFactory = new OpenRiaServices.DomainServices.Client.PortableWeb.WebApiDomainClientFactory();
                     break;
@@ -81,6 +82,7 @@ namespace ClientBenchmarks.Server
                         HttpClientHandler = new WinHttpHandler() { }
                     };
                     break;
+                    */
                 case DomainClientType.WcfBinary:
                     DomainContext.DomainClientFactory = new OpenRiaServices.DomainServices.Client.Web.WebDomainClientFactory();
                     break;
@@ -121,18 +123,18 @@ namespace ClientBenchmarks.Server
             return await _ctx.LoadAsync(_ctx.GetCitiesQuery()).ConfigureAwait(false);
         }
 
-        [Benchmark]
+        //[Benchmark]
         public Task<InvokeResult<string>> InvokeAsync()
         {
             return _ctx.EchoAsync("a");
         }
 
-        const int ParallelInvokeIterations = 400;
+        const int ParallelInvokeIterations = 40;
 
-        //[Arguments(ParallelInvokeIterations, 1)]
-        //[Arguments(ParallelInvokeIterations, 2)]
-        //[Arguments(ParallelInvokeIterations, 4)]
-        //[Benchmark(OperationsPerInvoke = ParallelInvokeIterations)]
+        [Arguments(ParallelInvokeIterations, 1)]
+        [Arguments(ParallelInvokeIterations, 2)]
+        [Arguments(ParallelInvokeIterations, 4)]
+        [Benchmark(OperationsPerInvoke = ParallelInvokeIterations)]
         public async Task RunBenchmarksAsyncParallel(int total = 1000, int concurrent = 8)
         {
             int outer = total / concurrent;
@@ -147,12 +149,12 @@ namespace ClientBenchmarks.Server
             }
         }
 
-        const int PipeLineInvocations = 400;
+        const int PipeLineInvocations = 40;
 
-        //[Arguments(PipeLineInvocations, 1)]
-        //[Arguments(PipeLineInvocations, 2)]
-        //[Arguments(PipeLineInvocations, 4)]
-        //[Benchmark(OperationsPerInvoke = PipeLineInvocations)]
+        [Arguments(PipeLineInvocations, 1)]
+        [Arguments(PipeLineInvocations, 2)]
+        [Arguments(PipeLineInvocations, 4)]
+        [Benchmark(OperationsPerInvoke = PipeLineInvocations)]
         public async Task PipelinedLoadAsync(int total = 10, int depth = 2)
         {
             var tasks = new Task[depth];

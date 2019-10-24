@@ -18,7 +18,7 @@ namespace ClientBenchmarks
 {
     internal class Program
     {
-        static bool onlyProfiling = true;
+        static bool onlyProfiling = false;
 
         private static void Main(string[] args)
         {
@@ -66,8 +66,8 @@ namespace ClientBenchmarks
             }
             else
             {
-                BenchmarkRunner.Run<LoadBenchmarks>();
-                //BenchmarkRunner.Run<E2Ebenchmarks>();
+                //BenchmarkRunner.Run<LoadBenchmarks>();
+                BenchmarkRunner.Run<E2Ebenchmarks>();
                 //BenchmarkRunner.Run<EntityBenchmarks>();
                 //BenchmarkRunner.Run<EntitySetBenchmarks>();
                 //BenchmarkRunner.Run<ChangeSetBenchmarks>();
@@ -77,6 +77,7 @@ namespace ClientBenchmarks
 
         private static void StartServerAndWaitForKey(Uri uri, Type type)
         {
+            /*
             if (DomainServicesSection.Current.Endpoints.Count == 1)
             {
                 DomainServicesSection.Current.Endpoints.Add(
@@ -84,6 +85,7 @@ namespace ClientBenchmarks
                 DomainServicesSection.Current.Endpoints.Add(
                     new ProviderSettings("json", typeof(JsonEndpointFactory).AssemblyQualifiedName));
             }
+            */
 
             using (var host = new DomainServiceHost(type, uri))
             {

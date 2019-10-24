@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ClientBenchmarks.Helpers
 {
@@ -25,27 +24,80 @@ namespace ClientBenchmarks.Helpers
         /// <param name="validationResult"></param>
         public void SetQueryResult(IEnumerable<Entity> entities, IEnumerable<Entity> relatedEntities = null, int totalCount = -1, IEnumerable<ValidationResult> validationResult = null)
         {
-            QueryResult = new QueryCompletedResult(entities.ToList(), 
+            QueryResult = new QueryCompletedResult(entities.ToList(),
                 relatedEntities ?? Enumerable.Empty<Entity>(),
                 totalCount,
                 validationResult ?? Enumerable.Empty<ValidationResult>()
                 );
         }
 
-        protected override Task<QueryCompletedResult> QueryAsyncCore(EntityQuery query, CancellationToken cancellationToken)
+        protected override IAsyncResult BeginQueryCore(EntityQuery query, AsyncCallback callback, object userState)
         {
-            return Task.FromResult(QueryResult);
+            var result = new MockLoadResult
+            {
+                QueryResult = this.QueryResult,
+                AsyncState = userState,
+            };
+
+            callback(result);
+            return result;
         }
 
-        protected override Task<InvokeCompletedResult> InvokeAsyncCore(InvokeArgs invokeArgs, CancellationToken cancellationToken)
+        protected override InvokeCompletedResult EndInvokeCore(IAsyncResult asyncResult)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<SubmitCompletedResult> SubmitAsyncCore(EntityChangeSet changeSet, CancellationToken cancellationToken)
+        protected override QueryCompletedResult EndQueryCore(IAsyncResult asyncResult)
         {
-            return Task.FromResult(new SubmitCompletedResult(changeSet, changeSet.GetChangeSetEntries()));
+            var loadResult = ((MockLoadResult)(asyncResult));
+            return loadResult.QueryResult;
+        }
 
+        protected override SubmitCompletedResult EndSubmitCore(IAsyncResult asyncResult)
+        {
+            var submitResult = ((MockSubmitResult)(asyncResult));
+            return new SubmitCompletedResult(submitResult.EntityChangeSet, submitResult.ChangeSetEntries); ;
+        }
+
+        protected override IAsyncResult BeginSubmitCore(EntityChangeSet changeSet, AsyncCallback callback, object userState)
+        {
+            var asyncResult = new MockSubmitResult()
+            {
+                AsyncState = userState,
+                EntityChangeSet = changeSet,
+                ChangeSetEntries = changeSet.GetChangeSetEntries(),
+            };
+            callback(asyncResult);
+            return asyncResult;
+        }
+
+        class MockLoadResult : IAsyncResult
+        {
+            public QueryCompletedResult QueryResult { get; set; }
+
+            public object AsyncState { get; set; }
+
+            public WaitHandle AsyncWaitHandle => null;
+
+            public bool CompletedSynchronously => true;
+
+            public bool IsCompleted => true;
+        }
+
+        class MockSubmitResult : IAsyncResult
+        {
+            public EntityChangeSet EntityChangeSet { get; set; }
+
+            public IEnumerable<ChangeSetEntry> ChangeSetEntries { get; set; }
+
+            public object AsyncState { get; set; }
+
+            public WaitHandle AsyncWaitHandle => null;
+
+            public bool CompletedSynchronously => true;
+
+            public bool IsCompleted => true;
         }
     }
 }
