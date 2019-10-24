@@ -104,12 +104,12 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client.Web\Framework\Desktop\OpenRiaServices.DomainServices.Client.Web.csproj">
-      <Project>{bdb2f9a3-5fc7-45fd-8496-b23752232688}</Project>
+    <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client.Web\Framework\OpenRiaServices.DomainServices.Client.Web.csproj">
+      <Project>{f4af96a9-94e2-44dd-83c4-c691f4c04166}</Project>
       <Name>OpenRiaServices.DomainServices.Client.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client\Framework\Desktop\OpenRiaServices.DomainServices.Client.csproj">
-      <Project>{3f4fbbd2-a634-44c7-9def-d71f349e706c}</Project>
+    <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Client\Framework\OpenRiaServices.DomainServices.Client.csproj">
+      <Project>{b63028c7-b43c-42d0-bee1-09ec310c572a}</Project>
       <Name>OpenRiaServices.DomainServices.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\openriaservices\OpenRiaServices.DomainServices.Hosting.Endpoint\Framework\OpenRiaServices.DomainServices.Hosting.Endpoint.csproj">
