@@ -3,22 +3,23 @@
 using BenchmarkDotNet.Running;
 using ClientBenchmarks.Server;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
-using OpenRiaServices.DomainServices.Client;
+using OpenRiaServices.Client;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Linq;
-using server::OpenRiaServices.DomainServices.Hosting;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
 using System.ServiceModel.Activation;
 using ClientBenchmarks.Server.Example;
 using System.Configuration;
+using server::OpenRiaServices.Hosting.Wcf;
+using server::OpenRiaServices.Hosting.Wcf.Configuration;
 
 namespace ClientBenchmarks
 {
     internal class Program
     {
-        static bool onlyProfiling = true;
+        static bool onlyProfiling = false;
 
         private static void Main(string[] args)
         {
@@ -67,11 +68,10 @@ namespace ClientBenchmarks
             else
             {
                 BenchmarkRunner.Run<LoadBenchmarks>();
-                //BenchmarkRunner.Run<E2Ebenchmarks>();
+                BenchmarkRunner.Run<E2Ebenchmarks>();
                 //BenchmarkRunner.Run<EntityBenchmarks>();
                 //BenchmarkRunner.Run<EntitySetBenchmarks>();
                 //BenchmarkRunner.Run<ChangeSetBenchmarks>();
-
             }
         }
 

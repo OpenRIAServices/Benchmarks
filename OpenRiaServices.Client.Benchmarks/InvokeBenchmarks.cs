@@ -18,7 +18,7 @@ namespace ClientBenchmarks
     {
         City _city = new City() { CountyName = "Dummy" };
 
-        [Params(10, 50, 100)]
+        [Params(10, 50, 100, 500)]
         public int NumInvocations { get; set; } = 1;
 
         [Benchmark()]

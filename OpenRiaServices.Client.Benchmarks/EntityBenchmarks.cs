@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
-using OpenRiaServices.DomainServices.Client;
+using OpenRiaServices.Client;
 
 namespace ClientBenchmarks
 {

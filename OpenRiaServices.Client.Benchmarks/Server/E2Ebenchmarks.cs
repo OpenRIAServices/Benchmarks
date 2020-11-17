@@ -10,10 +10,10 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
-using OpenRiaServices.DomainServices.Client;
-using OpenRiaServices.DomainServices.Client.Web;
-using server::OpenRiaServices.DomainServices.Hosting;
-using server::OpenRiaServices.DomainServices.Server;
+using OpenRiaServices.Client;
+using OpenRiaServices.Client.Web;
+using server::OpenRiaServices.Hosting.Wcf;
+using server::OpenRiaServices.Server;
 
 namespace ClientBenchmarks.Server
 {
@@ -73,16 +73,18 @@ namespace ClientBenchmarks.Server
             switch (DomainClient)
             {
                 case DomainClientType.HttpBinary:
-                    DomainContext.DomainClientFactory = new OpenRiaServices.DomainServices.Client.PortableWeb.WebApiDomainClientFactory();
+                    throw new NotImplementedException();
+                    //DomainContext.DomainClientFactory = new OpenRiaServices.Client.PortableWeb.WebApiDomainClientFactory();
                     break;
                 case DomainClientType.HttpBinaryWinHttp:
-                    DomainContext.DomainClientFactory = new OpenRiaServices.DomainServices.Client.PortableWeb.WebApiDomainClientFactory()
+                    throw new NotImplementedException(); 
+                    /*DomainContext.DomainClientFactory = new OpenRiaServices.Client.PortableWeb.WebApiDomainClientFactory()
                     {
                         HttpClientHandler = new WinHttpHandler() { }
-                    };
+                    };*/
                     break;
                 case DomainClientType.WcfBinary:
-                    DomainContext.DomainClientFactory = new OpenRiaServices.DomainServices.Client.Web.WebDomainClientFactory();
+                    DomainContext.DomainClientFactory = new OpenRiaServices.Client.Web.WebDomainClientFactory();
                     break;
                 default:
                     throw new NotImplementedException();

@@ -8,12 +8,15 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using OpenRiaServices;
-using server::OpenRiaServices.DomainServices;
-using server::OpenRiaServices.DomainServices.Hosting;
-using server::OpenRiaServices.DomainServices.Server;
+using server::OpenRiaServices;
+using server::OpenRiaServices.Hosting;
+using server::OpenRiaServices.Server;
 
 namespace OpenRiaServices.Client.Benchmarks.Server.Cities
 {
+    using EntityActionAttribute = server::OpenRiaServices.Server.EntityActionAttribute;
+    using DomainIdentifierAttribute = server::OpenRiaServices.DomainIdentifierAttribute;
+
     /// <summary>
     /// A simple test <see cref="CodeProcessor"/>, does not alter the codegen output in any way.
     /// </summary>

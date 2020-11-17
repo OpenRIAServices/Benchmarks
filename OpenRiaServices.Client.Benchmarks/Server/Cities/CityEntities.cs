@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using server::System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using OpenRiaServices.DomainServices;
+using OpenRiaServices;
 
 using RoundtripOriginalAttribute = server::System.ComponentModel.DataAnnotations.RoundtripOriginalAttribute;
 

@@ -5,21 +5,19 @@ VisualStudioVersion = 16.0.28902.138
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenRiaServices", "OpenRiaServices", "{CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.Client", "..\openriaservices\src\OpenRiaServices.DomainServices.Client\Framework\OpenRiaServices.DomainServices.Client.csproj", "{3F4FBBD2-A634-44C7-9DEF-D71F349E706C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.Client", "..\openriaservices\src\OpenRiaServices.Client\Framework\OpenRiaServices.Client.csproj", "{3F4FBBD2-A634-44C7-9DEF-D71F349E706C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{B1C61947-177C-4B45-ADFA-E228E579D3D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRiaServices.Client.Benchmarks", "OpenRiaServices.Client.Benchmarks\OpenRiaServices.Client.Benchmarks.csproj", "{EC43FF26-1F7A-4852-BF8B-A1443353C236}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.Hosting", "..\openriaservices\src\OpenRiaServices.DomainServices.Hosting\Framework\OpenRiaServices.DomainServices.Hosting.csproj", "{E3844512-48A8-451A-9BE4-AC7793016B9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.Hosting.Wcf", "..\openriaservices\src\OpenRiaServices.Hosting.Wcf\Framework\OpenRiaServices.Hosting.Wcf.csproj", "{E3844512-48A8-451A-9BE4-AC7793016B9D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.Server", "..\openriaservices\src\OpenRiaServices.DomainServices.Server\Framework\OpenRiaServices.DomainServices.Server.csproj", "{72E74082-7928-4A70-83C1-49806B942FCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.Server", "..\openriaservices\src\OpenRiaServices.Server\Framework\OpenRiaServices.Server.csproj", "{72E74082-7928-4A70-83C1-49806B942FCB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.Client.Web", "..\openriaservices\src\OpenRiaServices.DomainServices.Client.Web\Framework\OpenRiaServices.DomainServices.Client.Web.csproj", "{BDB2F9A3-5FC7-45FD-8496-B23752232688}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.Client.Web", "..\openriaservices\src\OpenRiaServices.Client.Web\Framework\OpenRiaServices.Client.Web.csproj", "{BDB2F9A3-5FC7-45FD-8496-B23752232688}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.PortableWeb", "..\OpenRiaPlayground\HttpClient\OpenRiaServices.DomainServices.PortableWeb\OpenRiaServices.DomainServices.PortableWeb.csproj", "{46A37A73-6888-45EE-895C-0B9D7349511F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.DomainServices.Hosting.Endpoint", "..\openriaservices\src\OpenRiaServices.DomainServices.Hosting.Endpoint\Framework\OpenRiaServices.DomainServices.Hosting.Endpoint.csproj", "{6187A6D3-2BC0-4C90-A1AF-8B479888C343}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.Hosting.Wcf.Endpoint", "..\openriaservices\src\OpenRiaServices.Hosting.Wcf.Endpoint\Framework\OpenRiaServices.Hosting.Wcf.Endpoint.csproj", "{6187A6D3-2BC0-4C90-A1AF-8B479888C343}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,12 +56,6 @@ Global
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688}.Signed|Any CPU.Build.0 = Release|Any CPU
-		{46A37A73-6888-45EE-895C-0B9D7349511F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{46A37A73-6888-45EE-895C-0B9D7349511F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{46A37A73-6888-45EE-895C-0B9D7349511F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{46A37A73-6888-45EE-895C-0B9D7349511F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{46A37A73-6888-45EE-895C-0B9D7349511F}.Signed|Any CPU.ActiveCfg = Release|Any CPU
-		{46A37A73-6888-45EE-895C-0B9D7349511F}.Signed|Any CPU.Build.0 = Release|Any CPU
 		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6187A6D3-2BC0-4C90-A1AF-8B479888C343}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -80,7 +72,6 @@ Global
 		{E3844512-48A8-451A-9BE4-AC7793016B9D} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{72E74082-7928-4A70-83C1-49806B942FCB} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{BDB2F9A3-5FC7-45FD-8496-B23752232688} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
-		{46A37A73-6888-45EE-895C-0B9D7349511F} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{6187A6D3-2BC0-4C90-A1AF-8B479888C343} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
