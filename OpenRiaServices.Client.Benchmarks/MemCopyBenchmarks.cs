@@ -9,25 +9,24 @@ using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using OpenRiaServices.Client;
-
+using System.Runtime.CompilerServices;
 
 namespace ClientBenchmarks
 {
-    [DisassemblyDiagnoser]
-    [LegacyJitX86Job, RyuJitX64Job]
+    //[RyuJitX86Job, RyuJitX64Job]
     public class MemCopyBenchmarks
     {
-        readonly byte[] _src = new byte[1024 * 10];
-        readonly byte[] _dest = new byte[1024 * 10];
+        readonly byte[] _src = new byte[1024 * 10 + 3];
+        readonly byte[] _dest = new byte[1024 * 10 + 3];
         private static readonly bool Is64Bit = Environment.Is64BitProcess;
 
-        [Params(4, 40, 200, 500)]
+        [Params(/*4, 40,*/ 200, 500, 10*1024)]
         public int NumBytes { get; set; }
 
-        //[Params(0)]
+//        [Params(0,3)]
         public int DestOffset { get; set; }
 
-        //        [Params(0, 1)]
+        //[Params(0)]
         public int SrcOffset { get; set; }
 
         [GlobalSetup]
@@ -37,14 +36,26 @@ namespace ClientBenchmarks
             rand.NextBytes(_src);
         }
 
-        //       [Benchmark(Baseline = true)]
+        [Benchmark(Baseline = true)]
         public void Buffer_BlockCopy()
         {
             Buffer.BlockCopy(_src, SrcOffset, _dest, DestOffset, NumBytes);
         }
 
+        [Benchmark]
+        public void Unsafe_Copy()
+        {
+            Unsafe.CopyBlockUnaligned(ref _dest[DestOffset], ref _src[SrcOffset], (uint)NumBytes);
+        }
 
-        [Benchmark()]
+        [Benchmark]
+        public void Span_Copy()
+        {
+            _src.AsSpan(SrcOffset, NumBytes)
+                .CopyTo(_dest.AsSpan(DestOffset));
+        }
+
+        //[Benchmark()]
         unsafe public void Buffer_MemoryCopy()
         {
             fixed (byte* src = &_src[SrcOffset])
@@ -52,7 +63,7 @@ namespace ClientBenchmarks
                 Buffer.MemoryCopy(src, dst, _dest.Length - DestOffset, NumBytes);
         }
 
-        [Benchmark()]
+        //[Benchmark()]
         unsafe public void Buffer_SmartCopy()
         {
             if (Is64Bit)
@@ -107,7 +118,7 @@ namespace ClientBenchmarks
             }
         }
 
-        [Benchmark()]
+   //     [Benchmark()]
         public unsafe void FastCopy_Long()
         {
             uint count = (uint)NumBytes;

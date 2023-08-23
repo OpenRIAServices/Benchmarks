@@ -3,17 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.ServiceModel.Activation;
 using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
 using OpenRiaServices.Client;
 using OpenRiaServices.Client.Web;
+
+#if NET48
+using System.ServiceModel.Activation;
 using server::OpenRiaServices.Hosting.Wcf;
 using server::OpenRiaServices.Server;
+#endif
 
 namespace ClientBenchmarks.Server
 {
@@ -45,7 +47,9 @@ namespace ClientBenchmarks.Server
         Uri _uri = new Uri("http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
         //Uri _clientUri = new Uri("http://localhost.fiddler/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
         Uri _clientUri = new Uri("http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
+#if NET48
         DomainServiceHost _host;
+#endif
         CityDomainContext _ctx;
 
         [Params(10, 100, 1000)]
@@ -59,6 +63,7 @@ namespace ClientBenchmarks.Server
 
         public void Start()
         {
+#if NET48
 
             _host = new DomainServiceHost(typeof(CityDomainService), _uri);
 
@@ -70,6 +75,7 @@ namespace ClientBenchmarks.Server
             }
 
             _host.Open();
+#endif
             switch (DomainClient)
             {
                 case DomainClientType.HttpBinary:
@@ -77,15 +83,17 @@ namespace ClientBenchmarks.Server
                     //DomainContext.DomainClientFactory = new OpenRiaServices.Client.PortableWeb.WebApiDomainClientFactory();
                     break;
                 case DomainClientType.HttpBinaryWinHttp:
-                    throw new NotImplementedException(); 
+                    throw new NotImplementedException();
                     /*DomainContext.DomainClientFactory = new OpenRiaServices.Client.PortableWeb.WebApiDomainClientFactory()
                     {
                         HttpClientHandler = new WinHttpHandler() { }
                     };*/
                     break;
+#if NET48
                 case DomainClientType.WcfBinary:
                     DomainContext.DomainClientFactory = new OpenRiaServices.Client.Web.WebDomainClientFactory();
                     break;
+#endif
                 default:
                     throw new NotImplementedException();
             }
@@ -107,7 +115,9 @@ namespace ClientBenchmarks.Server
         [GlobalCleanup]
         public void Stop()
         {
+#if NET48
             _host.Close();
+#endif
         }
 
         [Benchmark]

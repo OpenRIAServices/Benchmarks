@@ -9,7 +9,6 @@ using System.ServiceModel;
 using System.Threading.Tasks;
 using OpenRiaServices;
 using server::OpenRiaServices;
-using server::OpenRiaServices.Hosting;
 using server::OpenRiaServices.Server;
 
 namespace OpenRiaServices.Client.Benchmarks.Server.Cities

@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectGuid>{EC43FF26-1F7A-4852-BF8B-A1443353C236}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ClientBenchmarks</RootNamespace>
+    <AssemblyName>ClientBenchmarks</AssemblyName>
+    <TargetFramework>net8.0</TargetFramework>
+    <FileAlignment>512</FileAlignment>
+    <LangVersion>9.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!--<UseWPF>true</UseWPF>-->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="FinanceBenchmarks.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+    <None Update="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+    <ItemGroup>
+    <!--
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Client.DomainClients.Http\Framework\OpenRiaServices.Client.DomainClients.Http.csproj">
+      <Project>{a10e76b5-bbab-4a2e-a884-8b70663255c2}</Project>
+      <Name>OpenRiaServices.Client.DomainClients.Http</Name>
+    </ProjectReference>-->
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Client.Web\Framework\OpenRiaServices.Client.Web.csproj">
+      <Project>{BDB2F9A3-5FC7-45FD-8496-B23752232688}</Project>
+      <Name>OpenRiaServices.Client.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Client\Framework\OpenRiaServices.Client.csproj">
+      <Project>{3f4fbbd2-a634-44c7-9def-d71f349e706c}</Project>
+      <Name>OpenRiaServices.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Hosting.AspNetCore\Framework\OpenRiaServices.Hosting.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Hosting.Wcf.Endpoint\Framework\OpenRiaServices.Hosting.Wcf.Endpoint.csproj">
+      <Project>{6187a6d3-2bc0-4c90-a1af-8b479888c343}</Project>
+      <Name>OpenRiaServices.Hosting.Wcf.Endpoint</Name>
+      <Aliases>server</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Hosting.Wcf\Framework\OpenRiaServices.Hosting.Wcf.csproj">
+      <Project>{e3844512-48a8-451a-9be4-ac7793016b9d}</Project>
+      <Name>OpenRiaServices.Hosting.Wcf</Name>
+      <Aliases>server</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Server\Framework\OpenRiaServices.Server.csproj">
+      <Project>{72e74082-7928-4a70-83c1-49806b942fcb}</Project>
+      <Name>OpenRiaServices.Server</Name>
+      <Aliases>server</Aliases>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler">
+      <Version>6.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="BenchmarkDotNet">
+      <Version>0.13.2</Version>
+    </PackageReference>
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows">
+      <Version>0.13.2</Version>
+    </PackageReference>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+</Project>

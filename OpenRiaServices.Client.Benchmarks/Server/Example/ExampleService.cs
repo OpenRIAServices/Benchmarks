@@ -1,7 +1,6 @@
 ﻿extern alias server;
 
 using server::OpenRiaServices.Server;
-using server::OpenRiaServices.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;

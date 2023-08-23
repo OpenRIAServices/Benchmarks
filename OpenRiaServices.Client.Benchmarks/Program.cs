@@ -9,11 +9,26 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Linq;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
-using System.ServiceModel.Activation;
 using ClientBenchmarks.Server.Example;
+using OpenRiaServices.Hosting.AspNetCore.Serialization;
+using System.Buffers;
+using Microsoft.AspNetCore.Hosting;
+
+#if NET48
 using System.Configuration;
+using System.ServiceModel.Activation;
+
 using server::OpenRiaServices.Hosting.Wcf;
 using server::OpenRiaServices.Hosting.Wcf.Configuration;
+#else
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using OpenRiaServices.Hosting.AspNetCore;
+using System.Text;
+#endif
 
 namespace ClientBenchmarks
 {
@@ -21,13 +36,14 @@ namespace ClientBenchmarks
     {
         static bool onlyProfiling = false;
 
+        //[STAThread]
         private static void Main(string[] args)
         {
+
             if (args.Length > 0 && args.Contains("server"))
             {
                 Uri uri = new Uri($"http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
-                CityDomainService.GetCitiesResult = E2Ebenchmarks.CreateValidCities(1).ToList();
-                StartServerAndWaitForKey(uri, typeof(ExampelService));
+                CityDomainService.GetCitiesResult = E2Ebenchmarks.CreateValidCities(50_000).ToList();
                 StartServerAndWaitForKey(uri, typeof(CityDomainService));
                 return;
             }
@@ -67,24 +83,19 @@ namespace ClientBenchmarks
             }
             else
             {
-                BenchmarkRunner.Run<LoadBenchmarks>();
-                BenchmarkRunner.Run<E2Ebenchmarks>();
+                BenchmarkRunner.Run<MemCopyBenchmarks>(null, args);
+                //BenchmarkRunner.Run<LoadBenchmarks>();
+                //BenchmarkRunner.Run<E2Ebenchmarks>();
                 //BenchmarkRunner.Run<EntityBenchmarks>();
                 //BenchmarkRunner.Run<EntitySetBenchmarks>();
                 //BenchmarkRunner.Run<ChangeSetBenchmarks>();
             }
+
         }
 
         private static void StartServerAndWaitForKey(Uri uri, Type type)
         {
-            if (DomainServicesSection.Current.Endpoints.Count == 1)
-            {
-                DomainServicesSection.Current.Endpoints.Add(
-                    new ProviderSettings("soap", typeof(SoapXmlEndpointFactory).AssemblyQualifiedName));
-                DomainServicesSection.Current.Endpoints.Add(
-                    new ProviderSettings("json", typeof(JsonEndpointFactory).AssemblyQualifiedName));
-            }
-
+#if NET48
             using (var host = new DomainServiceHost(type, uri))
             {
                 //other relevent code to configure host's end point etc
@@ -101,6 +112,126 @@ namespace ClientBenchmarks
                 Console.ReadLine();
                 host.Close();
             }
+#else
+            var builder = WebApplication.CreateBuilder(Environment.GetCommandLineArgs());
+            builder.WebHost.UseUrls(new [] {"https://localhost:7045", "http://localhost:5000"});
+
+            // Register AddOpenRiaServices and all DomainServices
+            builder.Services.AddOpenRiaServices();
+            builder.Services.AddTransient(type);
+
+            // Add compression support so that we can support brotli compression (and don't have to rely on IIS gzip)
+            builder.Services.AddResponseCompression(options =>
+            {
+                // https://docs.microsoft.com/en-us/aspnet/core/performance/response-compression?view=aspnetcore-6.0#risk
+                options.EnableForHttps = true;
+                options.MimeTypes = new[] { "application/msbin1" };
+            });
+
+
+            var app = builder.Build();
+            app.UseResponseCompression();
+            // Enable mapping of all requests to root 
+            app.MapOpenRiaServices(builder =>
+            {
+                builder.AddDomainService(type);
+            });
+
+            // Bytes
+            var megabyte = new byte[1024 * 1024];
+            Random.Shared.NextBytes(megabyte);
+
+            foreach (var size in new[] { 1, 5, 10, 100 })
+            {
+                // Write 10 megabyte
+                app.MapGet($"/{size}/a", async httpContext =>
+                {
+                    // MINDRE GC ??
+                    using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
+
+                    httpContext.Response.Headers.ContentLength = memory.Length;
+                    httpContext.Response.Headers.ContentType = "application/binary";
+                    await memory.WriteTo(httpContext.Response, default);
+                });
+
+
+                app.MapGet($"/{size}/b", async httpContext =>
+                {
+                    using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
+
+                    httpContext.Response.Headers.ContentLength = memory.Length;
+                    httpContext.Response.Headers.ContentType = "application/binary";
+                    await memory.WriteToAsync(httpContext.Response, default);
+                });
+
+                app.MapGet($"/{size}/c", async httpContext =>
+                {
+                    using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
+                    // MINDRE GC ??
+                    httpContext.Response.Headers.ContentLength = memory.Length;
+                    httpContext.Response.Headers.ContentType = "application/binary";
+                    await memory.WriteTo2(httpContext.Response, default);
+                });
+
+
+                app.MapGet($"/{size}/d", async httpContext =>
+                {
+                    httpContext.Response.Headers.ContentType = "application/binary";
+                    await httpContext.Response.StartAsync();
+
+                    var stream = new ArrayPoolStream2(maxBlockSize: 4 * 1024 * 1024);
+                    stream.Reset(httpContext.Response.BodyWriter, 4096);
+                    for (int i = 0; i < size; ++i)
+                        stream.Write(megabyte);
+
+                    await stream.Finish(httpContext.Response);
+                    await httpContext.Response.CompleteAsync();
+                });
+            }
+
+            // new ArrayPoolStream.BufferMemory(ArrayPool<byte>.Shared, )
+
+            app.MapGet("/", httpContext =>
+            {
+                var dataSource = httpContext.RequestServices.GetRequiredService<EndpointDataSource>();
+
+                var sb = new StringBuilder();
+                sb.Append("<html><body>");
+                sb.AppendLine("<p>Endpoints:</p>");
+                foreach (var endpoint in dataSource.Endpoints.OfType<RouteEndpoint>().OrderBy(e => e.RoutePattern.RawText, StringComparer.OrdinalIgnoreCase))
+                {
+                    sb.AppendLine(FormattableString.Invariant($"- <a href=\"{endpoint.RoutePattern.RawText}\">{endpoint.RoutePattern.RawText}</a><br />"));
+                    foreach (var metadata in endpoint.Metadata)
+                    {
+                        sb.AppendLine("<li>" + metadata + "</li>");
+                    }
+                }
+
+                var response = httpContext.Response;
+                response.StatusCode = 200;
+
+                sb.AppendLine("</body></html>");
+                response.ContentType = "text/html";
+                return response.WriteAsync(sb.ToString());
+            });
+
+            app.Start();
+            Console.WriteLine($"DomainService {type.Name} running");
+            Console.WriteLine("Press ENTER to exit");
+            Console.ReadLine();
+            app.StopAsync().GetAwaiter().GetResult();
+#endif
+        }
+
+        private static ArrayPoolStream.BufferMemory WriteMemory(byte[] megabyte, int size)
+        {
+            var stream = new ArrayPoolStream(ArrayPool<byte>.Shared, maxBlockSize: 4 * 1024 * 1024);
+            stream.Reset(4096);
+            for (int i = 0; i < size; ++i)
+                stream.Write(megabyte);
+
+            var memory = stream.GetBufferMemoryAndReset();
+            return memory;
         }
 
         private static async Task RunBenchmarksAsyncParallel()
