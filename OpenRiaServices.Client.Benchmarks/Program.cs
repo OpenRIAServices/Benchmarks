@@ -13,6 +13,8 @@ using ClientBenchmarks.Server.Example;
 using OpenRiaServices.Hosting.AspNetCore.Serialization;
 using System.Buffers;
 using Microsoft.AspNetCore.Hosting;
+using System.Runtime.Versioning;
+using System.Reflection;
 
 #if NET48
 using System.Configuration;
@@ -42,8 +44,10 @@ namespace ClientBenchmarks
 
             if (args.Length > 0 && args.Contains("server"))
             {
+                Console.WriteLine($"Runtime {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
+
                 Uri uri = new Uri($"http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
-                CityDomainService.GetCitiesResult = E2Ebenchmarks.CreateValidCities(50_000).ToList();
+                CityDomainService.GetCitiesResult = E2Ebenchmarks.CreateValidCities(1).ToList();
                 StartServerAndWaitForKey(uri, typeof(CityDomainService));
                 return;
             }
@@ -113,24 +117,27 @@ namespace ClientBenchmarks
                 host.Close();
             }
 #else
+            const bool UseResponseCompression = false;
             var builder = WebApplication.CreateBuilder(Environment.GetCommandLineArgs());
-            builder.WebHost.UseUrls(new [] {"https://localhost:7045", "http://localhost:5000"});
+            builder.WebHost.UseUrls(new[] { "https://localhost:7045", "http://localhost:5000" });
 
             // Register AddOpenRiaServices and all DomainServices
             builder.Services.AddOpenRiaServices();
             builder.Services.AddTransient(type);
 
             // Add compression support so that we can support brotli compression (and don't have to rely on IIS gzip)
-            builder.Services.AddResponseCompression(options =>
-            {
-                // https://docs.microsoft.com/en-us/aspnet/core/performance/response-compression?view=aspnetcore-6.0#risk
-                options.EnableForHttps = true;
-                options.MimeTypes = new[] { "application/msbin1" };
-            });
-
+            if (UseResponseCompression)
+                builder.Services.AddResponseCompression(options =>
+                {
+                    // https://docs.microsoft.com/en-us/aspnet/core/performance/response-compression?view=aspnetcore-6.0#risk
+                    options.EnableForHttps = true;
+                    options.MimeTypes = new[] { "application/msbin1" };
+                });
 
             var app = builder.Build();
-            app.UseResponseCompression();
+
+            if (UseResponseCompression)
+                app.UseResponseCompression();
             // Enable mapping of all requests to root 
             app.MapOpenRiaServices(builder =>
             {
