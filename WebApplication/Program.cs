@@ -3,9 +3,6 @@ using OpenRiaServices.Client.Benchmarks.Server.Cities;
 using OpenRiaServices.Hosting.AspNetCore;
 
 
-CityDomainService.GetCitiesResult = CreateValidCities(10).ToList();
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -108,24 +105,3 @@ app.MapGet("/", httpContext =>
 });
 
 app.Run();
-
-static IEnumerable<OpenRiaServices.Client.Benchmarks.Server.Cities.City> CreateValidCities(int num)
-{
-    for (var i = 0; i < num; i++)
-    {
-        yield return new OpenRiaServices.Client.Benchmarks.Server.Cities.City { Name = "Name" + ToAlphaKey(i), CountyName = "Country", StateName = "SA" };
-    }
-}
-
-static string ToAlphaKey(int num)
-{
-    var sb = new StringBuilder();
-    do
-    {
-        var alpha = (char)('a' + (num % 25));
-        sb.Append(alpha);
-        num /= 25;
-    } while (num > 0);
-
-    return sb.ToString();
-}

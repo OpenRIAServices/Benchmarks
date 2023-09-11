@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.ServiceModel;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
 using OpenRiaServices.Server;
 
 namespace OpenRiaServices.Client.Benchmarks.Server.Cities
@@ -18,6 +14,10 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
     {
         // The value which GetCities should return
         public static List<City> GetCitiesResult { get; set; }
+        private static readonly IEnumerable<City> GetCitiesResult_50_000 = CreateValidCities(50_000);
+        private static readonly IEnumerable<City> GetCitiesResult_20_000 = CreateValidCities(20_000);
+        private static readonly IEnumerable<City> GetCitiesResult_50 = CreateValidCities(50);
+        private static readonly IEnumerable<City> GetCitiesResult_1 = CreateValidCities(1);
 
         private static readonly CityData _cityData = new CityData();
 
@@ -26,9 +26,40 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         private static List<CityWithEditHistory> _deletedCities = new List<CityWithEditHistory>();
 
         [Query]
-        public IEnumerable<City> GetCities()
+        public IEnumerable<City> GetCities(int? count)
         {
-            return GetCitiesResult;
+            if (count is int value)
+            {
+                return GetCitiesResult_50_000.Take(value);
+            }
+            else
+            {
+                return GetCitiesResult_50_000;
+            }
+        }
+
+        [Query]
+        public IEnumerable<City> GetCities_1()
+        {
+            return GetCitiesResult_1;
+        }
+
+        [Query]
+        public IEnumerable<City> GetCities_50()
+        {
+            return GetCitiesResult_50;
+        }
+
+        [Query]
+        public IEnumerable<City> GetCities_20_000()
+        {
+            return GetCitiesResult_20_000;
+        }
+
+        [Query]
+        public IEnumerable<City> GetCities_50_000()
+        {
+            return GetCitiesResult_50_000;
         }
 
         [Query]
@@ -324,6 +355,29 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         }
 
 #pragma warning restore 618
+
+        static List<City> CreateValidCities(int num)
+        {
+            List<City> results = new List<City>(num);
+            for (var i = 0; i < num; i++)
+            {
+                results.Add(new City { Name = "Name" + ToAlphaKey(i), CountyName = "Country", StateName = "SA" });
+            }
+            return results;
+        }
+
+        static string ToAlphaKey(int num)
+        {
+            var sb = new StringBuilder();
+            do
+            {
+                var alpha = (char)('a' + (num % 25));
+                sb.Append(alpha);
+                num /= 25;
+            } while (num > 0);
+
+            return sb.ToString();
+        }
     }
 
     /// <summary>
