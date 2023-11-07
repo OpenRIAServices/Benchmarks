@@ -19,20 +19,20 @@ namespace ClientBenchmarks
         private EntitySet<City> _entitySet;
         private List<City> _cities;
 
-        [Params(10, 500, 5000)]
+        [Params(10, 500, 5000, 50_000)]
         public int NumEntities { get; set; } = 500;
 
-        //[IterationSetup]
-        public void Setup()
+        [GlobalSetup]
+        public void GlobalSetup()
         {
             _entitySet = Helpers.EntitySetHelper.CreateEntitySet<City>();
             _cities = CreateCities(NumEntities).ToList();
         }
 
-        [Benchmark]
-        public void None()
+        //[IterationSetup]
+        public void Setup()
         {
-            Setup();
+            _entitySet.Clear();
         }
 
         [Benchmark]
