@@ -16,6 +16,8 @@ namespace ClientBenchmarks
     [ShortRunJob]
     public class EntitySetBenchmarks
     {
+        private Helpers.EntitySetHelper.DynamicEntityContainer _entityContainer;
+        private EntitySet<County> _counties;
         private EntitySet<City> _entitySet;
         private List<City> _cities;
 
@@ -25,14 +27,16 @@ namespace ClientBenchmarks
         [GlobalSetup]
         public void GlobalSetup()
         {
-            _entitySet = Helpers.EntitySetHelper.CreateEntitySet<City>();
+            _entityContainer = new Helpers.EntitySetHelper.DynamicEntityContainer();
+            _entitySet = _entityContainer.AddEntitySet<City>(EntitySetOperations.All);
+            _counties = _entityContainer.AddEntitySet<County>(EntitySetOperations.All);
             _cities = CreateCities(NumEntities).ToList();
         }
 
         //[IterationSetup]
         public void Setup()
         {
-            _entitySet.Clear();
+            _entityContainer.Clear();
         }
 
         [Benchmark]
@@ -46,6 +50,19 @@ namespace ClientBenchmarks
             }
         }
 
+        [Benchmark]
+        public void EntityCollection_Add()
+        {
+            Setup();
+
+            var county = new County() { Name = "c", StateName = "s" };
+            _counties.Add(county);
+
+            foreach (var city in GetCities())
+            {
+                county.Cities.Add(city);
+            }
+        }
 
         [Benchmark]
         public void Attach()
