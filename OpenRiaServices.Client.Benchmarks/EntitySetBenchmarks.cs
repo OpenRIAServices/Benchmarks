@@ -115,7 +115,7 @@ namespace ClientBenchmarks
 
             foreach (var entity in _entitySet)
             {
-                entity.Name = "changed";
+                entity.ZoneName = "changed";
             }
         }
 

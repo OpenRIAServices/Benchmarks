@@ -9,14 +9,15 @@ using BenchmarkDotNet.Attributes;
 using OpenRiaServices.Client.Benchmarks.Client.Cities;
 using ClientBenchmarks.Helpers;
 using OpenRiaServices.Client;
+using OpenRiaServices.Client.Benchmarks.Server.Cities;
+using City = OpenRiaServices.Client.Benchmarks.Client.Cities.City;
 
 namespace ClientBenchmarks
 {
     [MemoryDiagnoser]
-    [LegacyJitX86Job, RyuJitX64Job]
     public class LoadBenchmarks
     {
-        [Params(10, 100, 1000)]
+        [Params(/*100, */10_000, 80_000)]
         public int NumEntities { get; set; } = 500;
 
         public LoadBenchmarks()
@@ -49,30 +50,32 @@ namespace ClientBenchmarks
             return cities;
         }
 
-        [Benchmark]
-        public void NoOp()
+        MockDomainClient _mockDomainClient;
+        CityDomainContext _ctx;
+        List<City> _cities1;
+        List<City> _cities2;
+
+        [GlobalSetup]
+        public void GlobalSetup()
         {
-            var cities1 = CreateValidCities(NumEntities);
-            var cities2 = CreateValidCities(NumEntities);
+            _mockDomainClient = new MockDomainClient();
+            _ctx = new CityDomainContext(_mockDomainClient);
+            _cities1 = CreateValidCities(NumEntities);
+            _cities2 = CreateValidCities(NumEntities);
+        }
 
-            var mockDomainClient = new MockDomainClient();
-            var ctx = new CityDomainContext(mockDomainClient);
-
-            mockDomainClient.SetQueryResult(cities1);
-            mockDomainClient.SetQueryResult(cities2);
+        public void IterationSetup()
+        {
+            _ctx.EntityContainer.Clear();
         }
 
         [Benchmark]
         public void LoadEntities()
         {
-            var cities1 = CreateValidCities(NumEntities);
-            var cities2 = CreateValidCities(NumEntities);
+            IterationSetup();
 
-            var mockDomainClient = new MockDomainClient();
-            var ctx = new CityDomainContext(mockDomainClient);
-
-            mockDomainClient.SetQueryResult(cities1);
-            var res = ctx.Load(ctx.GetCitiesQuery(), true);
+            _mockDomainClient.SetQueryResult(_cities1);
+            var res = _ctx.Load(_ctx.GetCitiesQuery(), true);
             if (res.HasError)
                 throw new Exception("Operation should not have had erros");
             if (!res.IsComplete)
@@ -82,21 +85,17 @@ namespace ClientBenchmarks
         [Benchmark]
         public void LoadAndMergeEntities()
         {
-            var cities1 = CreateValidCities(NumEntities);
-            var cities2 = CreateValidCities(NumEntities);
+            IterationSetup();
 
-            var mockDomainClient = new MockDomainClient();
-            var ctx = new CityDomainContext(mockDomainClient);
-
-            mockDomainClient.SetQueryResult(cities1);
-            var res = ctx.Load(ctx.GetCitiesQuery(), true);
+            _mockDomainClient.SetQueryResult(_cities1);
+            var res = _ctx.Load(_ctx.GetCitiesQuery(), true);
             if (res.HasError)
                 throw new Exception("Operation should not have had erros");
             if (!res.IsComplete)
                 throw new Exception("Operation should have completed");
 
-            mockDomainClient.SetQueryResult(cities2);
-            res = ctx.Load(ctx.GetCitiesQuery(), LoadBehavior.MergeIntoCurrent, true);
+            _mockDomainClient.SetQueryResult(_cities2);
+            res = _ctx.Load(_ctx.GetCitiesQuery(), LoadBehavior.MergeIntoCurrent, true);
             if (res.HasError)
                 throw new Exception("Operation should not have had erros");
             if (!res.IsComplete)
@@ -106,22 +105,17 @@ namespace ClientBenchmarks
         [Benchmark]
         public void LoadAndRefreshEntities()
         {
-            var cities1 = CreateValidCities(NumEntities);
-            var cities2 = CreateValidCities(NumEntities);
+            IterationSetup();
 
-
-            var mockDomainClient = new MockDomainClient();
-            var ctx = new CityDomainContext(mockDomainClient);
-
-            mockDomainClient.SetQueryResult(cities1);
-            var res = ctx.Load(ctx.GetCitiesQuery(), true);
+            _mockDomainClient.SetQueryResult(_cities1);
+            var res = _ctx.Load(_ctx.GetCitiesQuery(), true);
             if (res.HasError)
                 throw new Exception("Operation should not have had erros");
             if (!res.IsComplete)
                 throw new Exception("Operation should have completed");
 
-            mockDomainClient.SetQueryResult(cities2);
-            res = ctx.Load(ctx.GetCitiesQuery(), LoadBehavior.RefreshCurrent, true);
+            _mockDomainClient.SetQueryResult(_cities2);
+            res = _ctx.Load(_ctx.GetCitiesQuery(), LoadBehavior.RefreshCurrent, true);
             if (res.HasError)
                 throw new Exception("Operation should not have had erros");
             if (!res.IsComplete)
