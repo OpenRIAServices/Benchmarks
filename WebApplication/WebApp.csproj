@@ -4,7 +4,12 @@
 		<TargetFrameworks>net8.0;net7.0</TargetFrameworks>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>12</LangVersion>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="MessagePack" Version="2.5.140" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Hosting.AspNetCore\Framework\OpenRiaServices.Hosting.AspNetCore.csproj" />
