@@ -2,6 +2,7 @@
 using MessagePack.Formatters;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
 
+#pragma warning disable MsgPack009 // Colliding formatters
 
 namespace WebApp.Serializers
 {

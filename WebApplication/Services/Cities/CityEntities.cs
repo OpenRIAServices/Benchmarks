@@ -64,10 +64,10 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         [Editable(false)]
         public string CalculatedCounty { get; set; }
 
-        [Association("County_City", "CountyName,StateName", "Name,StateName", IsForeignKey = true)]
+        [EntityAssociation("County_City", "CountyName,StateName", "Name,StateName", IsForeignKey = true)]
         public County County { get; set; }
 
-        [Association("City_Zip", "Name, CountyName, StateName", "CityName,  CountyName, StateName")]
+        [EntityAssociation("City_Zip", "Name, CountyName, StateName", "CityName,  CountyName, StateName")]
         public List<Zip> ZipCodes { get; set; }
     }
 
@@ -82,7 +82,7 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         [StringLength(32)]
         public string Info { get; set; }
 
-        [Association("CityWithInfo_ZipWithInfo", "Name, CountyName, StateName", "CityName,  CountyName, StateName")]
+        [EntityAssociation("CityWithInfo_ZipWithInfo", "Name, CountyName, StateName", "CityName,  CountyName, StateName")]
         public List<ZipWithInfo> ZipCodesWithInfo { get; set; }
     }
 
@@ -104,10 +104,10 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         [RoundtripOriginal]
         public string StateName { get; set; }
 
-        [Association("State_County", "StateName", "Name", IsForeignKey = true)]
+        [EntityAssociation("State_County", "StateName", "Name", IsForeignKey = true)]
         public State State { get; set; }
 
-        [Association("County_City", "Name,StateName", "CountyName,StateName")]
+        [EntityAssociation("County_City", "Name,StateName", "CountyName,StateName")]
         public List<City> Cities { get; set; }
     }
 
@@ -132,7 +132,7 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         [RoundtripOriginal]
         public string FullName { get; set; }
 
-        [Association("State_County", "Name", "StateName")]
+        [EntityAssociation("State_County", "Name", "StateName")]
         [CustomValidation(typeof(CountiesValidator), "AreCountiesValid")]
         public List<County> Counties { get; set; }
     }
@@ -174,7 +174,7 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
         public string StateName { get; set; }
 
         [CustomValidation(typeof(CityPropertyValidator), "IsValidCity")]
-        [Association("City_Zip", "CityName,  CountyName, StateName", "Name, CountyName, StateName", IsForeignKey = true)]
+        [EntityAssociation("City_Zip", "CityName,  CountyName, StateName", "Name, CountyName, StateName", IsForeignKey = true)]
         public City City { get; set; }
     }
 }

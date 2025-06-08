@@ -1,12 +1,31 @@
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Runtime.Serialization.DataContracts;
 using System.Text;
+using MessagePack.Resolvers;
+using Microsoft.AspNetCore.ResponseCompression;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
 using OpenRiaServices.Hosting.AspNetCore;
+using OpenRiaServices.Server;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+//MessagePack.Resolvers.CompositeResolver.RegisterAndSetAsDefault(
+//    new[] { MessagePack.Resolvers.StandardResolver.Instance },
+//    new[] { new CustomResolver(new CityFormatter()) }
+//);
+
+// Add services to the container.
+builder.Services.AddResponseCompression(o =>
+{
+    o.EnableForHttps = true;
+    o.Providers.Add<BrotliCompressionProvider>();
+    o.Providers.Add<GzipCompressionProvider>();
+    o.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/msbin1", "application/msgpack" });
+});
 builder.Services.AddOpenRiaServices();
 builder.Services.AddControllers();
 builder.Services.AddTransient<CityDomainService>();
@@ -14,6 +33,7 @@ builder.Services.AddTransient<CityDomainService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseResponseCompression();
 
 // app.UseAuthorization();
 app.MapControllers();
@@ -103,5 +123,6 @@ app.MapGet("/", httpContext =>
     response.ContentType = "text/html";
     return response.WriteAsync(sb.ToString());
 });
+
 
 app.Run();

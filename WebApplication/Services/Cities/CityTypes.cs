@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using PolyType;
 
 namespace OpenRiaServices.Client.Benchmarks.Server.Cities
 {
@@ -17,6 +18,7 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
     /// into other compilation units.
     /// </remarks>
     [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/Cities")]
+    [TypeShape]
     public partial class State
     {
         private readonly List<County> _counties = new List<County>();
@@ -29,6 +31,7 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
     }
 
     [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/Cities")]
+    [TypeShape]
     public partial class County
     {
         public County()
@@ -47,6 +50,9 @@ namespace OpenRiaServices.Client.Benchmarks.Server.Cities
     [KnownType(typeof(CityWithEditHistory))]
     [KnownType(typeof(CityWithInfo))]
     [JsonDerivedType(typeof(CityWithEditHistory))]
+    [TypeShape]
+    [DerivedTypeShape(typeof(CityWithEditHistory))]
+    [DerivedTypeShape(typeof(CityWithInfo))]
 
     public partial class City
     {
