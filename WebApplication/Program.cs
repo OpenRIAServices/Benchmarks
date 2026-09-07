@@ -2,38 +2,37 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.Serialization.DataContracts;
 using System.Text;
-using MessagePack.Resolvers;
 using Microsoft.AspNetCore.ResponseCompression;
 using OpenRiaServices.Client.Benchmarks.Server.Cities;
 using OpenRiaServices.Hosting.AspNetCore;
-using OpenRiaServices.Server;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-//MessagePack.Resolvers.CompositeResolver.RegisterAndSetAsDefault(
-//    new[] { MessagePack.Resolvers.StandardResolver.Instance },
-//    new[] { new CustomResolver(new CityFormatter()) }
-//);
-
 // Add services to the container.
 builder.Services.AddResponseCompression(o =>
 {
-    o.EnableForHttps = true;
+    // Run nettling without compression
+    o.EnableForHttps = false;
     o.Providers.Add<BrotliCompressionProvider>();
     o.Providers.Add<GzipCompressionProvider>();
     o.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes.Concat(
-        new[] { "application/msbin1", "application/msgpack" });
+        new[] { "application/msbin1", "application/msgpack", "application/msgpack2" });
 });
-builder.Services.AddOpenRiaServices();
+builder.Services.AddOpenRiaServices()
+    .ClearSerializationProviders()
+    .AddXmlSerialization(false)    
+    .AddMessagePackSerialization(true)
+    ;
+
 builder.Services.AddControllers();
 builder.Services.AddTransient<CityDomainService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseResponseCompression();
+// app.UseResponseCompression();
 
 // app.UseAuthorization();
 app.MapControllers();
@@ -48,60 +47,6 @@ app.MapOpenRiaServices(builder =>
 });
 
 /****************************************************************************
-// Bytes
-var megabyte = new byte[1024 * 1024];
-Random.Shared.NextBytes(megabyte);
-
-foreach (var size in new[] { 1, 5, 10, 100 })
-{
-    // Write 10 megabyte
-    app.MapGet($"/{size}/a", async httpContext =>
-    {
-        // MINDRE GC ??
-        using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
-
-        httpContext.Response.Headers.ContentLength = memory.Length;
-        httpContext.Response.Headers.ContentType = "application/binary";
-        await memory.WriteTo(httpContext.Response, default);
-    });
-
-
-    app.MapGet($"/{size}/b", async httpContext =>
-    {
-        using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
-
-        httpContext.Response.Headers.ContentLength = memory.Length;
-        httpContext.Response.Headers.ContentType = "application/binary";
-        await memory.WriteToAsync(httpContext.Response, default);
-    });
-
-    app.MapGet($"/{size}/c", async httpContext =>
-    {
-        using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
-        // MINDRE GC ??
-        httpContext.Response.Headers.ContentLength = memory.Length;
-        httpContext.Response.Headers.ContentType = "application/binary";
-        await memory.WriteTo2(httpContext.Response, default);
-    });
-
-
-    app.MapGet($"/{size}/d", async httpContext =>
-    {
-        httpContext.Response.Headers.ContentType = "application/binary";
-        await httpContext.Response.StartAsync();
-
-        var stream = new ArrayPoolStream2(maxBlockSize: 4 * 1024 * 1024);
-        stream.Reset(httpContext.Response.BodyWriter, 4096);
-        for (int i = 0; i < size; ++i)
-            stream.Write(megabyte);
-
-        await stream.Finish(httpContext.Response);
-        await httpContext.Response.CompleteAsync();
-    });
-}
-
-// new ArrayPoolStream.BufferMemory(ArrayPool<byte>.Shared, )
-
 */
 app.MapGet("minimalapi/cities", () => CityDomainService.GetCitiesResult);
 app.MapGet("/", httpContext =>

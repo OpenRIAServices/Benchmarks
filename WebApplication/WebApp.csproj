@@ -1,15 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0</TargetFrameworks>
+		<TargetFrameworks>net10.0</TargetFrameworks>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<LangVersion>12</LangVersion>
+		<LangVersion>14</LangVersion>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="MessagePack" Version="3.1.3" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\OpenRiaServices\src\OpenRiaServices.Hosting.AspNetCore\Framework\OpenRiaServices.Hosting.AspNetCore.csproj" />

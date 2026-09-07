@@ -15,6 +15,10 @@ using System.Buffers;
 using Microsoft.AspNetCore.Hosting;
 using System.Runtime.Versioning;
 using System.Reflection;
+using BenchmarkDotNet.Attributes;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Threading;
 
 #if NET48
 using System.Configuration;
@@ -34,6 +38,8 @@ using System.Text;
 
 namespace ClientBenchmarks
 {
+  
+
     internal class Program
     {
         static bool onlyProfiling = false;
@@ -41,9 +47,9 @@ namespace ClientBenchmarks
         //[STAThread]
         private static void Main(string[] args)
         {
-
             if (args.Length > 0 && args.Contains("server"))
             {
+
                 Console.WriteLine($"Runtime {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
 
                 Uri uri = new Uri($"http://localhost/Temporary_Listen_Addresses/Cities/Services/Citites.svc");
@@ -54,28 +60,28 @@ namespace ClientBenchmarks
 
             if (onlyProfiling || (args.Length > 0 && args[0].Contains("profile")))
             {
-                //Task.Run(() => RunBenchmarksAsyncParallel()).Wait();
+                var es = new EntitySetBenchmarks();
+                es.NumEntities = 50_000;
+                es.GlobalSetup();
 
-                Task.Run(() => RunPipelined()).Wait();
-                Console.WriteLine("PAUSE");
-                Console.ReadLine();
-                return;
+                Console.WriteLine("Warmup ..");
+                es.Add();
+                es.AddAndDetach();
+                es.AddAndRemove();
+                es.Attach();
+                es.AttachAndDetach();
+                es.AttachAndModify();
+                es.AttachAndRemove();
 
-                const int num = 1;
-                for (int i = 0; i < 1; ++i)
+                Console.WriteLine("Sleeping");
+                Thread.Sleep(5000);
+
+                es = new EntitySetBenchmarks();
+                es.NumEntities = 50_000;
+                es.GlobalSetup();
+
+                for (int i = 0; i < 10; ++i)
                 {
-                    var a = new LoadBenchmarks();
-                    a.NumEntities = num;
-                    a.LoadEntities();
-                    a.LoadAndRefreshEntities();
-                    a.LoadAndMergeEntities();
-
-                    var s = new ChangeSetBenchmarks();
-                    s.NumEntities = num;
-                    s.SubmitAdded();
-
-                    var es = new EntitySetBenchmarks();
-                    es.NumEntities = num;
                     es.Add();
                     es.AddAndDetach();
                     es.AddAndRemove();
@@ -84,11 +90,46 @@ namespace ClientBenchmarks
                     es.AttachAndModify();
                     es.AttachAndRemove();
                 }
+
+                Console.WriteLine("Done..");
+                Thread.Sleep(5000);
+                return;
+                //Task.Run(() => RunBenchmarksAsyncParallel()).Wait();
+
+                //Task.Run(() => RunPipelined()).Wait();
+                //Console.WriteLine("PAUSE");
+                //Console.ReadLine();
+                //return;
+
+                //const int num = 1;
+                //for (int i = 0; i < 1; ++i)
+                //{
+                //    var a = new LoadBenchmarks();
+                //    a.NumEntities = num;
+                //    a.LoadEntities();
+                //    a.LoadAndRefreshEntities();
+                //    a.LoadAndMergeEntities();
+
+                //    var s = new ChangeSetBenchmarks();
+                //    s.NumEntities = num;
+                //    s.SubmitAdded();
+
+                //    var es = new EntitySetBenchmarks();
+                //    es.NumEntities = num;
+                //es.Add();
+                //es.AddAndDetach();
+                //es.AddAndRemove();
+                //es.Attach();
+                //es.AttachAndDetach();
+                //es.AttachAndModify();
+                //es.AttachAndRemove();
+                //}
             }
             else
             {
-                BenchmarkRunner.Run<MemCopyBenchmarks>(null, args);
-                //BenchmarkRunner.Run<LoadBenchmarks>();
+                //BenchmarkRunner.Run<MemCopyBenchmarks>(null, args);
+                //BenchmarkRunner.Run<EntitySetBenchmarks>();
+                BenchmarkRunner.Run<LoadBenchmarks>();
                 //BenchmarkRunner.Run<E2Ebenchmarks>();
                 //BenchmarkRunner.Run<EntityBenchmarks>();
                 //BenchmarkRunner.Run<EntitySetBenchmarks>();
@@ -96,6 +137,7 @@ namespace ClientBenchmarks
             }
 
         }
+
 
         private static void StartServerAndWaitForKey(Uri uri, Type type)
         {
@@ -122,7 +164,8 @@ namespace ClientBenchmarks
             builder.WebHost.UseUrls(new[] { "https://localhost:7045", "http://localhost:5000" });
 
             // Register AddOpenRiaServices and all DomainServices
-            builder.Services.AddOpenRiaServices();
+            builder.Services.AddOpenRiaServices()
+                .AddMessagePackSerialization(true);
             builder.Services.AddTransient(type);
 
             // Add compression support so that we can support brotli compression (and don't have to rely on IIS gzip)
@@ -143,58 +186,6 @@ namespace ClientBenchmarks
             {
                 builder.AddDomainService(type);
             });
-
-            // Bytes
-            var megabyte = new byte[1024 * 1024];
-            Random.Shared.NextBytes(megabyte);
-
-            foreach (var size in new[] { 1, 5, 10, 100 })
-            {
-                // Write 10 megabyte
-                app.MapGet($"/{size}/a", async httpContext =>
-                {
-                    // MINDRE GC ??
-                    using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
-
-                    httpContext.Response.Headers.ContentLength = memory.Length;
-                    httpContext.Response.Headers.ContentType = "application/binary";
-                    await memory.WriteTo(httpContext.Response, default);
-                });
-
-
-                app.MapGet($"/{size}/b", async httpContext =>
-                {
-                    using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
-
-                    httpContext.Response.Headers.ContentLength = memory.Length;
-                    httpContext.Response.Headers.ContentType = "application/binary";
-                    await memory.WriteToAsync(httpContext.Response, default);
-                });
-
-                app.MapGet($"/{size}/c", async httpContext =>
-                {
-                    using ArrayPoolStream.BufferMemory memory = WriteMemory(megabyte, size);
-                    // MINDRE GC ??
-                    httpContext.Response.Headers.ContentLength = memory.Length;
-                    httpContext.Response.Headers.ContentType = "application/binary";
-                    await memory.WriteTo2(httpContext.Response, default);
-                });
-
-
-                app.MapGet($"/{size}/d", async httpContext =>
-                {
-                    httpContext.Response.Headers.ContentType = "application/binary";
-                    await httpContext.Response.StartAsync();
-
-                    var stream = new ArrayPoolStream2(maxBlockSize: 4 * 1024 * 1024);
-                    stream.Reset(httpContext.Response.BodyWriter, 4096);
-                    for (int i = 0; i < size; ++i)
-                        stream.Write(megabyte);
-
-                    await stream.Finish(httpContext.Response);
-                    await httpContext.Response.CompleteAsync();
-                });
-            }
 
             // new ArrayPoolStream.BufferMemory(ArrayPool<byte>.Shared, )
 

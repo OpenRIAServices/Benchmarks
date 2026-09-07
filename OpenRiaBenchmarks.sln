@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32819.101
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12105.206 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenRiaServices", "OpenRiaServices", "{CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRiaServices.Hosting.AspNetCore", "..\OpenRiaServices\src\OpenRiaServices.Hosting.AspNetCore\Framework\OpenRiaServices.Hosting.AspNetCore.csproj", "{36826413-67D2-452D-B2AD-D1CEC7F03D65}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApplication\WebApp.csproj", "{2B6BBC95-1F7A-4A1E-BCAD-4CF8DABBBF9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Hosting.WCF", "Server.Hosting.WCF\Server.Hosting.WCF.csproj", "{FBD313AC-F758-4A1A-9DF3-E5855C3D5CB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{2B6BBC95-1F7A-4A1E-BCAD-4CF8DABBBF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B6BBC95-1F7A-4A1E-BCAD-4CF8DABBBF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B6BBC95-1F7A-4A1E-BCAD-4CF8DABBBF9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBD313AC-F758-4A1A-9DF3-E5855C3D5CB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBD313AC-F758-4A1A-9DF3-E5855C3D5CB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBD313AC-F758-4A1A-9DF3-E5855C3D5CB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBD313AC-F758-4A1A-9DF3-E5855C3D5CB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{6187A6D3-2BC0-4C90-A1AF-8B479888C343} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{36826413-67D2-452D-B2AD-D1CEC7F03D65} = {CC521FA5-FDA7-491D-9BAA-3D4F4715A42D}
 		{2B6BBC95-1F7A-4A1E-BCAD-4CF8DABBBF9A} = {B1C61947-177C-4B45-ADFA-E228E579D3D7}
+		{FBD313AC-F758-4A1A-9DF3-E5855C3D5CB5} = {B1C61947-177C-4B45-ADFA-E228E579D3D7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {593EA07D-8EEC-4DAA-9B48-DA7717C3A80F}
