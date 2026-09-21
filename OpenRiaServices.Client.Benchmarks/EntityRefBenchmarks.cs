@@ -9,16 +9,17 @@ using OpenRiaServices.Client.Benchmarks.Client.Cities;
 namespace ClientBenchmarks
 {
     [MemoryDiagnoser]
-    [ShortRunJob]
+//    [ShortRunJob]
     public class EntityRefBenchmarks
     {
-        [Params(10, 100, 1_000, 10_000, 100_000)]
+        [Params(10, 500,/* 1_000,*/ 10_000/*, 100_000*/)]
         public int NumEntities { get; set; } = 1_000;
 
+
         [Benchmark]
-        public void ColdLookup()
+        public void LookupExisting_CompositeKey()
         {
-            var (_, _, cities) = CreateLookupGraph(NumEntities, warmCache: false);
+            var (_, _, cities) = CreateLookupGraph(NumEntities, addCitiesToSet: true);
 
             foreach (var city in cities)
             {
@@ -31,27 +32,28 @@ namespace ClientBenchmarks
         }
 
         [Benchmark]
-        public void CachedLookup()
+        public void LookupExisting_StringKey()
         {
-            var (_, _, cities) = CreateLookupGraph(NumEntities, warmCache: true);
+            var (counties, _, _) = CreateLookupGraph(NumEntities, addCitiesToSet: true);
 
-            foreach (var city in cities)
+            foreach (var county in counties)
             {
-                var county = city.County;
-                if (county == null)
+                var state = county.State;
+                if (state == null)
                 {
-                    throw new InvalidOperationException("Expected matching County for the cached lookup case.");
+                    throw new InvalidOperationException("Expected matching State for the cold lookup case.");
                 }
             }
         }
 
         [Benchmark]
-        public void MissingKeyLookup()
+        public void MissingKeyLookup_CompositeKey()
         {
             var cities = CreateMissingKeyCities(NumEntities);
 
             foreach (var city in cities)
             {
+                city.CountyName = $"NotFound";
                 var county = city.County;
                 if (county != null)
                 {
@@ -61,56 +63,40 @@ namespace ClientBenchmarks
         }
 
         [Benchmark]
-        public void ForeignKeyChange()
+        public void MissingLookupExisting_StringKey()
         {
-            var container = new EntitySetHelper.DynamicEntityContainer();
-            var counties = container.AddEntitySet<County>(EntitySetOperations.All);
-            var cities = container.AddEntitySet<City>(EntitySetOperations.All);
+            var (counties, _, _) = CreateLookupGraph(NumEntities, addCitiesToSet: true);
 
-            var oldCounty = new County { Name = "OldCounty", StateName = "ST" };
-            var newCounty = new County { Name = "NewCounty", StateName = "ST" };
-            counties.Add(oldCounty);
-            counties.Add(newCounty);
-
-            foreach (var i in EnumerableRange(NumEntities))
+            foreach (var county in counties)
             {
-                var city = new City
+                county.StateName = "missing";
+                var state = county.State;
+                if (state != null)
                 {
-                    Name = $"FkCity-{i}",
-                    CountyName = oldCounty.Name,
-                    StateName = oldCounty.StateName,
-                };
-
-                cities.Add(city);
-                city.County = oldCounty;
-
-                city.CountyName = newCounty.Name;
-                city.StateName = newCounty.StateName;
-
-                var resolved = city.County;
-                if (resolved != newCounty)
-                {
-                    throw new InvalidOperationException("Expected changed FK to resolve to the replacement County.");
+                    throw new InvalidOperationException("Expected missing-key lookup to return null.");
                 }
             }
         }
 
         [Benchmark]
-        public void CompositeKeyLookup()
+        public void ForeignKeyChange_StringKey()
         {
-            var (_, _, cities) = CreateLookupGraph(NumEntities, warmCache: false);
+            var (counties, _, _) = CreateLookupGraph(NumEntities, addCitiesToSet: true);
 
-            foreach (var city in cities)
+            int idx = 1;
+            foreach (var county in counties)
             {
-                var county = city.County;
-                if (county == null || county.Name != city.CountyName || county.StateName != city.StateName)
+                // Change the FK to the next item in the list, wrapping around to the first item.
+                county.StateName = $"ST{idx++ % NumEntities}";
+                var state = county.State;
+                if (state == null || state.Name != county.StateName)
                 {
-                    throw new InvalidOperationException("Expected composite-key lookup to resolve the matching County.");
+                    throw new InvalidOperationException("Expected missing-key lookup to return null.");
                 }
             }
         }
 
-        [Benchmark]
+        //[Benchmark]
         public void AttachAndDetach()
         {
             for (var i = 0; i < NumEntities; i++)
@@ -135,17 +121,20 @@ namespace ClientBenchmarks
             }
         }
 
-        private static (EntitySet<County> Counties, EntitySet<City> Cities, List<City> LookupCities) CreateLookupGraph(int count, bool warmCache)
+        private static (EntitySet<County> Counties, EntitySet<City> Cities, List<City> LookupCities) CreateLookupGraph(int count, bool addCitiesToSet)
         {
             var container = new EntitySetHelper.DynamicEntityContainer();
             var counties = container.AddEntitySet<County>(EntitySetOperations.All);
             var cities = container.AddEntitySet<City>(EntitySetOperations.All);
-            var lookupCities = new List<City>(count);
+            var states = container.AddEntitySet<State>(EntitySetOperations.All);
+            var citiesList = new List<City>(count);
 
             for (var i = 0; i < count; i++)
             {
-                var county = new County { Name = $"County-{i}", StateName = "ST" };
-                counties.Add(county);
+                var county = new County { Name = $"County-{i}", StateName = $"ST{i}" };
+                counties.Attach(county);
+
+                states.Attach(new State() { Name = county.StateName, FullName="Full name" });
 
                 var city = new City
                 {
@@ -154,16 +143,14 @@ namespace ClientBenchmarks
                     StateName = county.StateName,
                 };
 
-                cities.Add(city);
-                if (warmCache)
+                citiesList.Add(city);
+                if (addCitiesToSet)
                 {
-                    city.County = county;
+                    cities.Attach(city);
                 }
-
-                lookupCities.Add(city);
             }
 
-            return (counties, cities, lookupCities);
+            return (counties, cities, citiesList);
         }
 
         private static List<City> CreateMissingKeyCities(int count)
